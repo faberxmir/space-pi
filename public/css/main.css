@@ -1,0 +1,13 @@
+body {
+    background-color: aliceblue;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#intro {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    max-width: 100%;
+    width: 85ch;
+}

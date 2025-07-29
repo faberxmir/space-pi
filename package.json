@@ -1,0 +1,31 @@
+{
+  "name": "space-pi",
+  "version": "1.0.0",
+  "description": "node server for controlling a space-pi",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "devmode": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/faberxmir/space-pi.git"
+  },
+  "keywords": [
+    "raspberry",
+    "pi",
+    "wargaming"
+  ],
+  "author": "Geir Hilmersen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/faberxmir/space-pi/issues"
+  },
+  "homepage": "https://github.com/faberxmir/space-pi#readme",
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0"
+  }
+}
