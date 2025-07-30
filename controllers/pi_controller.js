@@ -18,8 +18,8 @@ function shiftOut16(value) {
 }
 
 function pulse(pin) {
-  pin.high();
-  pin.low();
+  pin.on();
+  pin.off();
 }
 
 function shiftOut8(byte) {
