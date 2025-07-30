@@ -31,6 +31,11 @@ async function main() {
             await setOutput(val);
             await sleep(200);
         }
+        for(let i = 8; i >= 0; i--){
+            const val = 1 << i;
+            await setOutput(val);
+            await sleep(200);
+        }
     }
 }
 
