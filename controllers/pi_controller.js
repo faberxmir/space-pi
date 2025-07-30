@@ -19,6 +19,11 @@ function shiftOut16(value) {
   latchPin.off();
 }
 
+function pulse(pin) {
+  pin.high();
+  pin.low();
+}
+
 function shiftOut(byte) {
   // Send 8 bits, MSB first
   for (let i = 7; i >= 0; i--) {
