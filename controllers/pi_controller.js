@@ -1,8 +1,8 @@
 const Gpio = require('onoff').Gpio;
 
-const dataPin = new Gpio(17, 'out');
-const clockPin = new Gpio(27, 'out');
-const latchPin = new Gpio(22, 'out');
+const dataPin = new Gpio(529, 'out'); //Physical 11 blue
+const clockPin = new Gpio(539, 'out'); //Physical 13 green
+const latchPin = new Gpio(534, 'out'); //Physical 15 yellow
 
 
 async function pulse(pin){
