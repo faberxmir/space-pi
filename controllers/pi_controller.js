@@ -38,7 +38,7 @@ async function knightRider() {
   const leds = [0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80];
 
   while (true) {
-    // Forward
+    // Forwardgi
     for (let val of leds) {
       await setOutput(~val & 0xFF);  // Invert if needed
       await sleep(100);
@@ -51,6 +51,9 @@ async function knightRider() {
   }
 }
 
+function sleep(ms){
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 knightRider();
 process.on('SIGINT', ()=>{
     dataPin.unexport();
