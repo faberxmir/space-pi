@@ -5,6 +5,10 @@ const clockPin = new Gpio(539, 'out'); //Physical 13 green
 const latchPin = new Gpio(534, 'out'); //Physical 15 yellow
 
 
+function sleep(ms){
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function pulse(pin){
     await pin.write(1); //ON
     await pin.write(0); //OFF
@@ -51,9 +55,7 @@ async function knightRider() {
   }
 }
 
-function sleep(ms){
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
+
 knightRider();
 process.on('SIGINT', ()=>{
     dataPin.unexport();
