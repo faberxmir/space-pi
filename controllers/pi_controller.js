@@ -11,12 +11,10 @@ function shiftOut16(value) {
   for (let i = 15; i >= 0; i--) {
     const bit = (value >> i) & 1;
     dataPin.write(bit);
-    clockPin.on();
-    clockPin.off();
+    pulse(clockPin);
   }
   // Latch the outputs
-  latchPin.on();
-  latchPin.off();
+  pulse(latchPin);
 }
 
 function pulse(pin) {
@@ -24,14 +22,14 @@ function pulse(pin) {
   pin.low();
 }
 
-function shiftOut(byte) {
+function shiftOut8(byte) {
   // Send 8 bits, MSB first
   for (let i = 7; i >= 0; i--) {
     dataPin.write((byte >> i) & 1);
-    pulse(clk);
+    pulse(clockPin);
   }
   // Latch output
-  pulse(latch);
+  pulse(latchPin);
 }
 
 async function knightRider() {
@@ -41,13 +39,18 @@ async function knightRider() {
   while (true) {
     // Sweep right
     for (let i = 0; i < 8; i++) {
-      shiftOut(pattern << i);
+      shiftOut8(pattern << i);
       await delay(60);
     }
     // Sweep left
     for (let i = 6; i > 0; i--) {
-      shiftOut(pattern << i);
+      shiftOut8(pattern << i);
       await delay(60);
     }
   }
 }
+
+process.on('SIGINT', () => {
+  shiftOut8(0);  // turn off all LEDs
+  process.exit();
+});
