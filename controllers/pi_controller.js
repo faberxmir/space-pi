@@ -1,4 +1,4 @@
-import { Gpio } from "onoff";
+const Gpio = require('onoff').Gpio;
 
 const dataPin = new Gpio(17, 'out');
 const clockPin = new Gpio(27, 'out');
