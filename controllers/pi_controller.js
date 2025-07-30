@@ -1,8 +1,9 @@
 const r = require('array-gpio');
 
-const dataPin = new Gpio(11, {mode:Gpio.OUTPUT}); //Physical 11 blue
-const clockPin = new Gpio(13, {mode:Gpio.OUTPUT}); //Physical 13 green
-const latchPin = new Gpio(15, {mode:Gpio.OUTPUT}); //Physical 15 yellow
+// TB62706BN pins
+const dataPin  = r.out(11);  // DIN
+const clockPin = r.out(13);  // CLK
+const latchPin = r.out(15);  // LATCH
 
 
 function shiftOut16(value) {
