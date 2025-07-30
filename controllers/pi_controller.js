@@ -22,7 +22,7 @@ function shiftOut16(value) {
 function shiftOut(byte) {
   // Send 8 bits, MSB first
   for (let i = 7; i >= 0; i--) {
-    data.write((byte >> i) & 1);
+    dataPin.write((byte >> i) & 1);
     pulse(clk);
   }
   // Latch output
