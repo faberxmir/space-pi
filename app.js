@@ -1,4 +1,5 @@
 require('dotenv').config();
+require('./controllers/pi_controller');
 
 const express= require('express');
 const app = express();
