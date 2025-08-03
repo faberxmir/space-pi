@@ -4,8 +4,6 @@ const {
     allLightsOff
 } = require('../controllers/pi_controller');
 
-router.use('/lights');
-
 router.get('/on', allLightsOn);
 
 router.get('/off', allLightsOff);
