@@ -1,13 +1,14 @@
 require('dotenv').config();
-require('./controllers/pi_controller');
 
 const express= require('express');
 const app = express();
 
-const router = require('./routers/default_router');
+const html_router = require('./routers/default_router');
+const led_router = require('./routers/light_routes');
 
 app.use(express.static('public'));
-app.use(router);
+app.use(led_router);
+app.use(html_router);
 
 const PORT = process.env.PORT;
 app.listen(PORT, ()=> {

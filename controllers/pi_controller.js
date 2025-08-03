@@ -5,8 +5,6 @@ const dataPin  = r.out(11);  // DIN
 const clockPin = r.out(13);  // CLK
 const latchPin = r.out(15);  // LATCH
 
-knightRider();
-
 function shiftOut16(value) {
   for (let i = 15; i >= 0; i--) {
     const bit = (value >> i) & 1;
@@ -50,7 +48,20 @@ async function knightRider() {
   }
 }
 
+function allLightsOn(){
+    shiftOut8(255);
+}
+function allLightsOff(){
+    shiftOut8(0);
+}
+
 process.on('SIGINT', () => {
   shiftOut8(0);  // turn off all LEDs
   process.exit();
 });
+
+module.exports={
+    allLightsOff,
+    allLightsOn,
+    knightRider
+}
