@@ -4,24 +4,24 @@ const {
     setCustom
 } = require('../handlers/pi_handler');
 
-const allLightsOn = (req, res) => {
+const lightsOn = (req, res) => {
     allLightsOn();
     res.status(200).json({result:"ok"});
 }
 
-const allLightsOff = (req, res) => {
+const lightsOff = (req, res) => {
     allLightsOff();
     res.status(200).json({result:"ok"});
 }
 
-const setCustom = (req,res)=>{
+const setLight = (req,res)=>{
     const byte=req.params.byte;
     setCustom(byte);
     res.status(200).json({result:"ok"});
 }
 
 module.exports={
-    allLightsOn,
-    allLightsOff,
-    setCustom
+    lightsOn,
+    lightsOff,
+    setLight
 }
