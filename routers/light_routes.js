@@ -3,7 +3,7 @@ const {
     allLightsOn,
     allLightsOff,
     setCustom
-} = require('../handlers/pi_handler');
+} = require('../controllers/pi_controller');
 
 router.get('/on', allLightsOn);
 
