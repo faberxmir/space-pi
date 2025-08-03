@@ -4,10 +4,17 @@ body {
 }
 
 #intro {
-    align-items: center;
     display: flex;
     flex-direction: column;
-    margin: 0 auto;
-    max-width: 100%;
     width: 85ch;
+}
+
+#button-panel {
+    display: flex;
+}
+
+.std-width {
+    margin: 0 auto;
+    width: 85ch;
+    max-width: 100%;
 }
