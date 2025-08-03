@@ -15,7 +15,7 @@ const lightsOff = (req, res) => {
 }
 
 const setLight = (req,res)=>{
-    const byte=req.params.byte;
+    const byte=req.query.byte;
     setCustom(byte);
     res.status(200).json({result:"ok"});
 }
