@@ -1,5 +1,5 @@
 require('dotenv').config();
-require('./controllers/oled_handler');
+require('./handlers/oled_handler');
 
 const express= require('express');
 const app = express();
