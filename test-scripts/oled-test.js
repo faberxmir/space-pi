@@ -10,6 +10,9 @@ const oled = new Oled(i2cBus, {
   address: 0x3C
 });
 
-oled.clearDisplay();
-oled.setCursor(0, 0);
-oled.writeString(font, 1, 'HELLO PI', 1, true);
+// Delay 500ms before writing
+setTimeout(() => {
+  oled.clearDisplay();
+  oled.setCursor(0, 0);
+  oled.writeString(font, 1, 'SPACEPI!', 1, true);
+}, 500);
