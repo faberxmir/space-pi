@@ -8,6 +8,7 @@ const oled = new Oled(i2cBus, {
     height: 64,
     address: 0x3c
 });
+console.log('OLED initialized');
 
 function showMessage(text) {
     oled.clearDisplay();

@@ -5,6 +5,9 @@ const dataPin  = r.out(11);  // DIN
 const clockPin = r.out(13);  // CLK
 const latchPin = r.out(15);  // LATCH
 
+allLightsOn();
+
+
 function shiftOut16(value) {
   for (let i = 15; i >= 0; i--) {
     const bit = (value >> i) & 1;
