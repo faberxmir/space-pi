@@ -1,4 +1,5 @@
 require('dotenv').config();
+require('./test-scripts/oled-test');
 
 const express= require('express');
 const app = express();
