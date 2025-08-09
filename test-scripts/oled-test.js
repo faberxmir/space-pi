@@ -19,11 +19,11 @@ if (process.platform === 'linux' && process.arch.startsWith('arm')) {
     setTimeout(() => {
       oled.clearDisplay();  // Just clear — don't turn off/on yet
       oled.setCursor(0, 0);
-      oled.writeString(font, 1, 'Hello Geir!', 1, true);
+      oled.writeString(font, 1, 'Spacepi!', 1, true);
       oled.setCursor(0, 8);
-      oled.writeString(font, 1, 'This is awesome!', 1, true);
-      oled.setCursor(0, 16);
-      oled.writeString(font, 1, 'This is 5v running on!!', 1, true);
+      oled.writeString(font, 1, 'Warp speed 10', 1, true);
+      oled.setCursor(0, 24);
+      oled.writeString(font, 1, 'going to another galaxy', 1, true);
       console.log('[OLED] Display updated');
     }, 1000);
 
