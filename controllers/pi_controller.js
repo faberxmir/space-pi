@@ -2,7 +2,7 @@ const {
     allLightsOff,
     allLightsOn,
     setCustom
-} = require('../handlers/pi_handler');
+} = require('../handlers/shift_register_handler');
 
 const lightsOn = (req, res) => {
     allLightsOn();
