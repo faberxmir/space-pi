@@ -21,9 +21,9 @@ if (process.platform === 'linux' && process.arch.startsWith('arm')) {
       oled.setCursor(0, 0);
       oled.writeString(font, 1, 'Spacepi!', 1, true);
       oled.setCursor(0, 8);
-      oled.writeString(font, 1, 'Warp speed 100', 1, true);
+      oled.writeString(font, 1, 'Running with array-gpio enabled!', 1, true);
       oled.setCursor(0, 24);
-      oled.writeString(font, 1, 'going to another movie!', 1, true);
+      oled.writeString(font, 1, 'going wilds!', 1, true);
       console.log('[OLED] Display updated');
     }, 1000);
 
