@@ -24,13 +24,13 @@ if (process.platform === 'linux' && process.arch.startsWith('arm')) {
       oled.writeString(font, 1, 'Running with array-gpio enabled!', 1, true);
       oled.setCursor(0, 24);
       oled.writeString(font, 1, 'going wilds!', 1, true);
-      console.log('[OLED] Display updated');
+      console.log(Date.now(), '[OLED] Display updated');
     }, 1000);
 
-    console.log('[OLED] Display initialized');
+    console.log(Date.now(), '[OLED] Display initialized');
   } catch (err) {
-    console.error('[OLED] Initialization error:', err.message);
+    console.error(Date.now(), '[OLED] Initialization error:', err.message);
   }
 } else {
-  console.warn('[OLED] Skipped: not running on Raspberry Pi');
+  console.warn(Date.now(), '[OLED] Skipped: not running on Raspberry Pi');
 }
