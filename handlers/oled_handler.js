@@ -22,7 +22,8 @@ const oled = (() => {
   try {
     const d = new Oled(i2cBus, { width: 128, height: 64, address: 0x3C });
     
-    setTimeout(() => setCenterMessage('Spacepi for everyone!'), 1000);
+    //setTimeout(() => setCenterMessage('Spacepi for everyone!'), 1000);
+    setTextAtPosition('Spacepi for everyone!', 0, 0);
     console.log('[OLED] Display initialized');
     return d;
   } catch (e) {
@@ -48,6 +49,11 @@ function setCenterMessage(text) {
 
 function setTextAtPosition(text, x, y) {
   oled.setCursor(round(x), round(y));
+  oled.writeString(font, 1, text, 1, true);
+}
+
+function setTextAtPosition(text, x, y) {
+  oled.setCursor(x, y);
   oled.writeString(font, 1, text, 1, true);
 }
 
