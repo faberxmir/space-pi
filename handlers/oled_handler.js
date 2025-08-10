@@ -52,10 +52,5 @@ function setTextAtPosition(text, x, y) {
   oled.writeString(font, 1, text, 1, true);
 }
 
-// function setTextAtPosition(text, x, y) {
-//   oled.setCursor(x, y);
-//   oled.writeString(font, 1, text, 1, true);
-// }
-
 module.exports = { setCenterMessage, setTextAtPosition };
 
