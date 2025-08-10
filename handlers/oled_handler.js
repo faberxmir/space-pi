@@ -38,13 +38,16 @@ process.on('exit', () => {
 function round(n) { return Math.max(0, Math.round(n)); }
 
 function setCenterMessage(text) {
-  // eager init guarantees oled exists; if not, let it throw
   oled.clearDisplay();
-  const charW = 6, charH = 7; // 5x7 font + 1px spacing
-  const x = round((oled.width  - text.length * charW) / 2);
-  const y = round((oled.height - charH) / 2);
+  const charW = 6, charH = 7; // 5x7 + spacing
+  const w = oled.WIDTH  || 128;
+  const h = oled.HEIGHT || 64;
+  const x = Math.max(0, Math.round((w - text.length * charW) / 2));
+  const y = Math.max(0, Math.round((h - charH) / 2));
   oled.setCursor(x, y);
   oled.writeString(font, 1, text, 1, true);
+  // If your build requires it:
+  // oled.update();
 }
 
 function setTextAtPosition(text, x, y) {
