@@ -4,5 +4,9 @@ const data  = r.out(11);
 const clock = r.out(13);
 const latch = r.out(15);
 
+r.startI2C();
+require('../old-test'); // ensure OLED is initialized
+
+
 // keep process alive briefly so you can check pin states
 setTimeout(() => {}, 60000);
