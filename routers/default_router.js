@@ -1,9 +1,12 @@
 const router = require('express').Router();
-const { setCenterMessage} = require('../controllers/oled_controller');
+const { controlMessage, setOledText} = require('../controllers/oled_controller');
 
 router.get('/', (req, res)=>{
-    controlMessage(req, res);
     res.sendFile("index.html");
 })
+
+router.get('/control', controlMessage)
+
+router.get('/setText',setOledText);
 
 module.exports=router;

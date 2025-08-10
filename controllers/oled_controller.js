@@ -11,6 +11,23 @@ const controlMessage = (req, res) => {
     }
 }
 
+const setOledText = (req, res) => {
+    const { text, x, y } = req.query;
+    if (!text || x === undefined || y === undefined) {
+        setTextAtPosition("ERROR", 7, 7)
+        return res.status(400).json({ error: 'Missing required parameters: text, x, y' });
+    }
+    
+    try {
+        setTextAtPosition(text, parseInt(x), parseInt(y));
+        res.status(200).json({ result: "ok" });
+    } catch (err) {
+        console.error(Date.now(), '[OLED] Error setting text at position:', err.message);
+        res.status(500).json({ error: "Failed to set text at position" });
+    }
+}
+
 module.exports = {
-    setCenterMessage
+    controlMessage,
+    setOledText
 }
