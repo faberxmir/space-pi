@@ -1,4 +1,4 @@
-const {getGpio, setPinOut} = require('gpio-handler');
+const {getGpio, setPinOut} = require('./gpio_handler');
 
 // TB62706BN pins
 const dataPin  = setPinOut(11);  // DIN
