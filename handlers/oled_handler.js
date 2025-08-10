@@ -14,7 +14,7 @@ if (process.platform === 'linux' && process.arch.startsWith('arm')) {
       height: 64,
       address: 0x3C
     });
-    
+
     setCenterMessage('Spacepi 1!');
 
     // Delay OLED usage by 1 second for safety
@@ -27,6 +27,22 @@ if (process.platform === 'linux' && process.arch.startsWith('arm')) {
     //   console.log('[OLED] Display updated');
     // }, 1000);
 
+    function setCenterMessage(text) {
+        const x = (oled.width - (text.length * 6)) / 2; // 6 is the width of each character in 5x7 font
+        const y = (oled.height - 7) / 2; // 7 is the height of the font
+        oled.setCursor(x, y);
+        oled.writeString(font, 1, text, 1, true);
+    }
+
+    function setTextAtPosition(text, x, y) {
+        oled.setCursor(x, y);
+        oled.writeString(font, 1, text, 1, true);
+    }
+
+    module.exports = {
+        setCenterMessage,
+        setTextAtPosition
+    };
     console.log('[OLED] Display initialized');
   } catch (err) {
     console.error('[OLED] Initialization error:', err.message);
@@ -35,19 +51,3 @@ if (process.platform === 'linux' && process.arch.startsWith('arm')) {
   console.warn('[OLED] Skipped: not running on Raspberry Pi');
 }
 
-function setCenterMessage(text) {
-    const x = (oled.width - (text.length * 6)) / 2; // 6 is the width of each character in 5x7 font
-    const y = (oled.height - 7) / 2; // 7 is the height of the font
-    oled.setCursor(x, y);
-    oled.writeString(font, 1, text, 1, true);
-}
-
-function setTextAtPosition(text, x, y) {
-    oled.setCursor(x, y);
-    oled.writeString(font, 1, text, 1, true);
-}
-
-module.exports = {
-    showMessage,
-    setTextAtPosition
-};
