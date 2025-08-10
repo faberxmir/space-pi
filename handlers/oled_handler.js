@@ -15,20 +15,26 @@ if (process.platform === 'linux' && process.arch.startsWith('arm')) {
       address: 0x3C
     });
 
-    setTimeout(() => {
-
-      setCenterMessage('Spacepi 1!');
-    }, 1000);
 
     // Delay OLED usage by 1 second for safety
-    // setTimeout(() => {
-    //   oled.clearDisplay();  // Just clear — don't turn off/on yet
-    //   oled.setCursor(0, 0);
-    //   oled.writeString(font, 1, 'Spacepi!', 1, true);
-    //   oled.setCursor(0, 8);
-    //   oled.writeString(font, 1, 'Happy times!', 1, true);
-    //   console.log('[OLED] Display updated');
-    // }, 1000);
+    setTimeout(() => {
+      oled.clearDisplay();  // Just clear — don't turn off/on yet
+      oled.setCursor(0, 0);
+      oled.writeString(font, 1, 'Spacepi!', 1, true);
+      oled.setCursor(0, 8);
+      oled.writeString(font, 1, 'Happy times!', 1, true);
+      console.log('[OLED] Display updated');
+    }, 1000);
+
+
+    console.log('[OLED] Display initialized');
+  } catch (err) {
+    console.error('[OLED] Initialization error:', err.message);
+  }
+} else {
+  console.warn('[OLED] Skipped: not running on Raspberry Pi');
+}
+
 
     function setCenterMessage(text) {
       console.info('[OLED] Setting center message:', text);
@@ -48,11 +54,3 @@ if (process.platform === 'linux' && process.arch.startsWith('arm')) {
         setCenterMessage,
         setTextAtPosition
     };
-    console.log('[OLED] Display initialized');
-  } catch (err) {
-    console.error('[OLED] Initialization error:', err.message);
-  }
-} else {
-  console.warn('[OLED] Skipped: not running on Raspberry Pi');
-}
-
