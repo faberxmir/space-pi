@@ -5,11 +5,7 @@ const dataPin  = setPinOut(11);  // DIN
 const clockPin = setPinOut(13);  // CLK
 const latchPin = setPinOut(15);  // LATCH
 
-shiftAllLightsOnce();
-await delay(1000);
-allLightsOn();
-await delay(1000);
-allLightsOff();
+runStartupRoutine();
 
 function allLightsOn() {
     shiftOut8(255);
@@ -23,6 +19,14 @@ function setCustom(byte) {
 
 }
 //--------------Light Patterns-----------------\\
+async function runStartupRoutine() {
+    shiftAllLightsOnce();
+    await delay(1000);
+    allLightsOn();
+    await delay(1000);
+    allLightsOff();
+}
+
 async function shiftAllLightsOnce(){
     for (let i = 0; i < 8; i++) {
         shiftOut8(1 << i);
