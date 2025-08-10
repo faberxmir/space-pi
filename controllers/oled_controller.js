@@ -1,6 +1,6 @@
 const {setCenterMessage, setTextAtPosition}= require('../handlers/oled_handler'); // Ensure OLED handler is initialized
 
-const setCenterMessage = (req, res) => {
+const controlMessage = (req, res) => {
     const message = req.query.message || 'Default Message';
     try {
         setCenterMessage(message);
