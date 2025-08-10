@@ -22,7 +22,7 @@ const oled = (() => {
   try {
     const d = new Oled(i2cBus, { width: 128, height: 64, address: 0x3C });
     
-    setTimeout(() => setCenterMessage('Spacepi for everyone!'), 100);
+    setTimeout(() => setCenterMessage('Spacepi for everyone!'), 1000);
     console.log('[OLED] Display initialized');
     return d;
   } catch (e) {
