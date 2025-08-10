@@ -6,9 +6,9 @@ const clockPin = setPinOut(13);  // CLK
 const latchPin = setPinOut(15);  // LATCH
 
 shiftAllLightsOnce();
-delay(1000);
+await delay(1000);
 allLightsOn();
-delay(1000);
+await delay(1000);
 allLightsOff();
 
 function allLightsOn() {
@@ -26,7 +26,7 @@ function setCustom(byte) {
 async function shiftAllLightsOnce(){
     for (let i = 0; i < 8; i++) {
         shiftOut8(1 << i);
-        delay(100);
+        await delay(100);
     }
 }
 function knightRider() {
