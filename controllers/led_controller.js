@@ -4,6 +4,8 @@ const {
     setCustom
 } = require('../handlers/shift_register_handler');
 
+require('../handlers/oled_handler'); // Ensure OLED handler is initialized
+
 const lightsOn = (req, res) => {
     allLightsOn();
     res.status(200).json({result:"ok"});
