@@ -1,56 +1,54 @@
+// oled_handler.js – eager, fail-fast singleton
 console.info('initializing oled_handler.js');
-let oled;
 
-if (process.platform === 'linux' && process.arch.startsWith('arm')) {
-  try {
-    const i2c = require('i2c-bus');
-    const Oled = require('oled-i2c-bus');
-    const font = require('oled-font-5x7');
-
-    const i2cBus = i2c.openSync(1);
-
-    oled = new Oled(i2cBus, {
-      width: 128,
-      height: 64,
-      address: 0x3C
-    });
-
-
-    // Delay OLED usage by 1 second for safety
-    setTimeout(() => {
-      oled.clearDisplay();  // Just clear — don't turn off/on yet
-      oled.setCursor(0, 0);
-      oled.writeString(font, 1, 'Spacepi!', 1, true);
-      oled.setCursor(0, 8);
-      oled.writeString(font, 1, 'Happy times!', 1, true);
-      console.log('[OLED] Display updated');
-    }, 1000);
-
-
-    console.log('[OLED] Display initialized');
-  } catch (err) {
-    console.error('[OLED] Initialization error:', err.message);
-  }
-} else {
-  console.warn('[OLED] Skipped: not running on Raspberry Pi');
+const isPi = process.platform === 'linux' && process.arch.startsWith('arm');
+if (!isPi) {
+  throw new Error('[OLED] Not running on Raspberry Pi ARM – aborting.');
 }
 
+const i2c = require('i2c-bus');
+const Oled = require('oled-i2c-bus');
+const font = require('oled-font-5x7');
 
-    function setCenterMessage(text) {
-      console.info('[OLED] Setting center message:', text);
-      oled.clearDisplay();
-        const x = (oled.width - (text.length * 6)) / 2; // 6 is the width of each character in 5x7 font
-        const y = (oled.height - 7) / 2; // 7 is the height of the font
-        oled.setCursor(x, y);
-        oled.writeString(font, 1, text, 1, true);
-    }
+const i2cBus = (() => {
+  try {
+    return i2c.openSync(1);
+  } catch (e) {
+    throw new Error(`[OLED] Could not open I²C bus 1: ${e.message}`);
+  }
+})();
 
-    function setTextAtPosition(text, x, y) {
-        oled.setCursor(x, y);
-        oled.writeString(font, 1, text, 1, true);
-    }
+const oled = (() => {
+  try {
+    const d = new Oled(i2cBus, { width: 128, height: 64, address: 0x3C });
+    
+    setTimeout(() => setCenterMessage('Spacepi for everyone!'), 100);
+    console.log('[OLED] Display initialized');
+    return d;
+  } catch (e) {
+    throw new Error(`[OLED] Init failed: ${e.message}`);
+  }
+})();
 
-    module.exports = {
-        setCenterMessage,
-        setTextAtPosition
-    };
+process.on('exit', () => {
+  try { i2cBus.closeSync(); } catch {}
+});
+
+function round(n) { return Math.max(0, Math.round(n)); }
+
+function setCenterMessage(text) {
+  // eager init guarantees oled exists; if not, let it throw
+  oled.clearDisplay();
+  const charW = 6, charH = 7; // 5x7 font + 1px spacing
+  const x = round((oled.width  - text.length * charW) / 2);
+  const y = round((oled.height - charH) / 2);
+  oled.setCursor(x, y);
+  oled.writeString(font, 1, text, 1, true);
+}
+
+function setTextAtPosition(text, x, y) {
+  oled.setCursor(round(x), round(y));
+  oled.writeString(font, 1, text, 1, true);
+}
+
+module.exports = { setCenterMessage, setTextAtPosition };
