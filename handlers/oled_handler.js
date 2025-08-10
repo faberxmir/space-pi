@@ -19,11 +19,9 @@ if (process.platform === 'linux' && process.arch.startsWith('arm')) {
     setTimeout(() => {
       oled.clearDisplay();  // Just clear — don't turn off/on yet
       oled.setCursor(0, 0);
-      oled.writeString(font, 1, 'Hello Geir!', 1, true);
+      oled.writeString(font, 1, 'Spacepi! Oled working', 1, true);
       oled.setCursor(0, 8);
-      oled.writeString(font, 1, 'This is awesome!', 1, true);
-      oled.setCursor(0, 16);
-      oled.writeString(font, 1, 'This is 5v running on!!', 1, true);
+      oled.writeString(font, 1, 'Happy times!', 1, true);
       console.log('[OLED] Display updated');
     }, 1000);
 
@@ -40,5 +38,3 @@ function showMessage(text) {
     oled.setCursor(0,0);
     oled.writeString(font,1,text,1,true);
 }
-
-showMessage('SPACEPI!');
