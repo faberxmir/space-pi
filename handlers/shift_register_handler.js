@@ -5,6 +5,12 @@ const dataPin  = setPinOut(11);  // DIN
 const clockPin = setPinOut(13);  // CLK
 const latchPin = setPinOut(15);  // LATCH
 
+shiftAllLightsOnce();
+delay(1000);
+allLightsOn();
+delay(1000);
+allLightsOff();
+
 function allLightsOn() {
     shiftOut8(255);
 
@@ -16,12 +22,21 @@ function setCustom(byte) {
     shiftOut8(byte);
 
 }
-
+//--------------Light Patterns-----------------\\
+async function shiftAllLightsOnce(){
+    for (let i = 0; i < 8; i++) {
+        shiftOut8(1 << i);
+        delay(100);
+    }
+}
 function knightRider() {
 
 }
 
 //-------------Private functions----------------\\
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 function shiftOut8(byte) {
   // Send 8 bits, MSB first
