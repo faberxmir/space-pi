@@ -15,7 +15,10 @@ if (process.platform === 'linux' && process.arch.startsWith('arm')) {
       address: 0x3C
     });
 
-    setCenterMessage('Spacepi 1!');
+    setTimeout(() => {
+
+      setCenterMessage('Spacepi 1!');
+    }, 1000);
 
     // Delay OLED usage by 1 second for safety
     // setTimeout(() => {
