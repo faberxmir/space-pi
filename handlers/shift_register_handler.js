@@ -2,9 +2,9 @@ const gpio = require('array-gpio');
 const {execSync} = require('child_process');
 
 // TB62706BN pins
-const dataPin  = setPinOut(11);  // DIN
-const clockPin = setPinOut(13);  // CLK
-const latchPin = setPinOut(15);  // LATCH
+const dataPin  = gpio.out(11);  // DIN
+const clockPin = gpio.out(13);  // CLK
+const latchPin = gpio.out(15);  // LATCH
 execSync('pinctrl -p set 3 a0; pinctrl -p set 5 a0');
 
 runStartupRoutine();
