@@ -3,7 +3,7 @@ const {
     lightsOn,
     lightsOff,
     setLight
-} = require('../controllers/pi_controller');
+} = require('../controllers/led_controller');
 
 router.get('/on', lightsOn);
 
