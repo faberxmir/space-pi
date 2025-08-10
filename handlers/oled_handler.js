@@ -28,6 +28,8 @@ if (process.platform === 'linux' && process.arch.startsWith('arm')) {
     // }, 1000);
 
     function setCenterMessage(text) {
+      console.info('[OLED] Setting center message:', text);
+      oled.clearDisplay();
         const x = (oled.width - (text.length * 6)) / 2; // 6 is the width of each character in 5x7 font
         const y = (oled.height - 7) / 2; // 7 is the height of the font
         oled.setCursor(x, y);
