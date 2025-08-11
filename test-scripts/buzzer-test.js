@@ -20,13 +20,13 @@ function tone(pin, freq = 2000, durationMs = 2000) {
       next = now + halfPeriodNs;
     }
   }
-  pin.low();
+  pin.off();
 }
 
 console.log("=== Active buzzer test: steady HIGH for 2s ===");
-buz.high();
+buz.on();
 setTimeout(() => {
-  buz.low();
+  buz.off();
 
   console.log("=== Passive buzzer test: 2kHz tone for 2s ===");
   tone(buz, 2000, 2000);
