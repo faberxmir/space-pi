@@ -7,12 +7,14 @@ const {
 require('../handlers/oled_handler'); // Ensure OLED handler is initialized
 
 const lightsOn = (req, res) => {
+    console.info("Turning lights ON");
     allLightsOn();
     res.status(200).json({result:"ok"});
 }
 
 const lightsOff = (req, res) => {
     allLightsOff();
+    console.info("Turning lights OFF");
     res.status(200).json({result:"ok"});
 }
 
