@@ -10,14 +10,14 @@ execSync('pinctrl -p set 3 a0; pinctrl -p set 5 a0');
 runStartupRoutine();
 
 function allLightsOn() {
-    shiftOut8(255);
+    shiftOut16(255);
 
 }
 function allLightsOff() {
-    shiftOut8(0);
+    shiftOut16(0);
 }
 function setCustom(byte) {
-    shiftOut8(byte);
+    shiftOut16(byte);
 
 }
 //--------------Light Patterns-----------------\\
@@ -52,6 +52,14 @@ function shiftOut8(byte) {
   }
   // Latch output
   pulse(latchPin);
+}
+
+function shiftOut16(byte) {
+  // Send 16 bits, MSB first
+  for (let i = 15; i >= 0; i--) {
+    dataPin.write((byte >> i) & 1);
+    pulse(clockPin);
+  }
 }
 
 function pulse(pin) {
