@@ -30,8 +30,8 @@ async function runStartupRoutine() {
 }
 
 async function shiftAllLightsOnce(){
-    for (let i = 0; i < 8; i++) {
-        shiftOut8(1 << i);
+    for (let i = 0; i < 16; i++) {
+        shiftOut16(1 << i);
         await delay(100);
     }
 }
@@ -60,6 +60,7 @@ function shiftOut16(byte) {
     dataPin.write((byte >> i) & 1);
     pulse(clockPin);
   }
+  pulse(latchPin);
 }
 
 function pulse(pin) {
