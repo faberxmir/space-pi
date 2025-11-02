@@ -20,5 +20,7 @@ async function pulse(pin, ms=200){ pin.on(); await sleep(ms); pin.off(); await s
 
   // Keep running so you can probe with the meter if needed
   await sleep(3000);
+  
+  dataPin.off(); clockPin.off(); latchPin.off();
   process.exit(0);
 })();
