@@ -12,8 +12,11 @@ async function pulse(pin, ms=200){ pin.on(); await sleep(ms); pin.off(); await s
   dataPin.off(); clockPin.off(); latchPin.off();
 
   // Hold DIN HIGH and clock 16 times slowly (visible on a multimeter)
-  dataPin.on();                              // logic "1" being shifted
-  for (let i = 0; i < 16; i++) await pulse(clockPin, 300);
+  dataPin.on();                             // logic "1" being shifted
+  for (let i = 0; i < 16; i++) {
+    await pulse(clockPin, 1000);
+    console.log(`Clock pulse ${i+1}/16`);
+  } 
 
   // Give LATCH a long, obvious pulse
   await pulse(latchPin, 800);
