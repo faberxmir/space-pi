@@ -6,7 +6,9 @@ const dataPin  = gpio.out(11);  // DIN
 const clockPin = gpio.out(13);  // CLK
 const latchPin = gpio.out(15);  // LATCH
 execSync('pinctrl -p set 3 a0; pinctrl -p set 5 a0');
+init();
 
+//--------------Light Patterns-----------------\\
 runStartupRoutine();
 
 function allLightsOn() {
@@ -67,10 +69,15 @@ function pulse(pin) {
   pin.on();
   pin.off();
 }
+function init() {
+  dataPin.off();
+  clockPin.off();
+  latchPin.off();
+}
 
 //--------------Process Listeners-----------------\\
 process.on('SIGINT', () => {
-  shiftOut8(0);  // turn off all LEDs
+  shiftOut16(0);  // turn off all LEDs
   process.exit();
 });
 
