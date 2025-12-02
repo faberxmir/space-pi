@@ -69,6 +69,7 @@ function pulse(pin) {
   pin.on();
   pin.off();
 }
+
 function init() {
   dataPin.off();
   clockPin.off();
