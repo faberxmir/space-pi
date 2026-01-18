@@ -14,7 +14,7 @@ function pulse(pin) {
 function allOn() {
   // shift in 16 bits of "1"
   for (let i = 0; i < 16; i++) {
-    DIN.on();
+    DIN.off();
     pulse(CLK);
   }
   pulse(LATCH);
