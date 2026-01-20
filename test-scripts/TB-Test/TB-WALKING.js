@@ -20,8 +20,8 @@ function latch() {
 }
 
 function shiftBit(bit) {
-  if (bit) DIN.on();
-  else DIN.off();
+  if (bit) DIN.off();
+  else DIN.on();
   pulse(CLK);
 }
 
