@@ -1,6 +1,7 @@
-// This script alternates the output of the TB DIN,CLK,LATCH pins
-// between HIGH and LOW every 2 seconds using a transistor inverter.
-// Usefull for diagnistic purposes to verify that signals to TB is working.
+// This script alternates on setting three GPIO pins high to test
+// the corresponding inputs on the TB-INPUT-DIAGNOSIS boards.
+// Usefull to check voltage, and if the intended pin settings in the 
+// program match the actual wiring.
 
 const gpio = require("array-gpio");
 
@@ -9,20 +10,44 @@ const din = gpio.output(11);
 const clk = gpio.output(13);
 const latch = gpio.output(15);
 
-let state = false;
+let state = 0;
 
 setInterval(() => {
-  state = !state;
-
-  if (state) {
-    din.on();  // Pi = 3.3V → transistor PÅ → TB DIN ca 0V
-    clk.on();
-    latch.on();
-    console.log("Pi GPIO: HIGH  | TB DIN: LOW (~0V)");
-  } else {
-    din.off();   // Pi = 0V → transistor AV → TB DIN ca 5V
-    clk.off();
-    latch.off();
-    console.log("Pi GPIO: LOW   | TB DIN: HIGH (~5V)");
+  
+  switch (state) {
+  case 0:
+    console.log("\n-- Pi 11 LOW → TB DIN HIGH --");
+    console.log(" (TB should see 5V at DIN/serial input)");
+    setDin();
+    break;
+  case 1:
+    console.log("\n-- Pi 13 LOW → TB CLK HIGH --");
+    console.log(" (TB should see 5V at CLK/clock input)");
+    setClk();
+    break;
+  case 2:
+    console.log("\n-- Pi 15 LOW → TB LATCH HIGH --");
+    console.log(" (TB should see 5V at LATCH/latch input)");
+    setLatch();
+    break;
   }
+
+  state < 2 ? state++ : state = 0;
 }, 2000); // bytter hvert 2. sekund
+
+
+function setDin() {
+  din.off();
+  clk.on();
+  latch.on();
+}
+function setClk() {
+  din.on();
+  clk.off();
+  latch.on();
+}
+function setLatch() {
+  din.on();
+  clk.on();
+  latch.off();
+}
