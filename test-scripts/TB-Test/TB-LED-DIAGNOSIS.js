@@ -16,7 +16,11 @@ function pulse(pin) {
 }
 
 function latch() {
+  CLK.on();
+  sleepMs(2);
   pulse(LATCH);
+  CLK.off();
+  sleepMs(2);
 }
 
 function shiftBit(bit) {
@@ -33,10 +37,24 @@ function showOneAt(pos) {
   latch();
 }
 
+
+function showAll(bit) {
+  for (let i = 0; i < 16; i++) shiftBit(bit);
+  latch();
+}
+
 (async function run() {
   for (let pos = 0; pos < 16; pos++) {
     showOneAt(pos);
     console.log("pos", pos);
     sleepMs(500);
   }
+
+  console.log("ALL ON (5s)");
+  showAll(1);
+  sleepMs(5000);
+
+  console.log("ALL OFF (5s)");
+  showAll(0);
+  sleepMs(5000);
 })();
