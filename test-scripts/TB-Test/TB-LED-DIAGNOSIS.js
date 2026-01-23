@@ -11,15 +11,16 @@ function sleepMs(ms) {
 }
 
 function pulse(pin) {
-  pin.on();  sleepMs(2);
-  pin.off(); sleepMs(2);
+  pin.on();  
+  sleepMs(2);
+  pin.off(); 
+  sleepMs(2);
 }
 
 function latch() {
-  CLK.on();
+  CLK.off();
   sleepMs(2);
   pulse(LATCH);
-  CLK.off();
   sleepMs(2);
 }
 
@@ -47,7 +48,7 @@ function showAll(bit) {
   for (let pos = 0; pos < 16; pos++) {
     showOneAt(pos);
     console.log("pos", pos);
-    sleepMs(500);
+    sleepMs(2000);
   }
 
   console.log("ALL ON (5s)");
