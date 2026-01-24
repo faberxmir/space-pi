@@ -3,13 +3,13 @@ const {
     lightsOn,
     lightsOff,
     setLight,
-    toggleLight
+    toggleLed
 } = require('../controllers/led_controller');
 
 router.get('/on', lightsOn);
 
 router.get('/off', lightsOff);
 
-router.get('/toggle', toggleLight);
+router.get('/toggle', toggleLed);
 
 module.exports=router;

@@ -29,7 +29,7 @@ function setCustom(byte) {
 
 }
 
-function toggleLight(byte) {
+function toggleBit(byte) {
     state=state ^ byte;
     shiftOut16(state);
 }
@@ -108,5 +108,5 @@ module.exports={
     allLightsOn,
     knightRider,
     setCustom,
-    toggleLight
+    toggleBit
 }
