@@ -48,7 +48,7 @@ function showAll(bit) {
   for (let pos = 0; pos < 16; pos++) {
     showOneAt(pos);
     console.log("pos", pos);
-    sleepMs(2000);
+    sleepMs(5000);
   }
 
   console.log("ALL ON (5s)");

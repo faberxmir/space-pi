@@ -20,6 +20,11 @@ const lightsOff = (req, res) => {
 
 const setLight = (req,res)=>{
     const byte=req.query.byte;
+    const regex = /^0b[01]{16}$/
+    if (!regex.test(byte)) {
+        res.status(400).json({error:"Invalid byte format. Use 0b followed by 16 bits."});
+        return;
+    }
     setCustom(byte);
     res.status(200).json({result:"ok"});
 }

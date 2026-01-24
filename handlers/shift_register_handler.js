@@ -63,6 +63,7 @@ function shiftOut8(byte) {
 
 function shiftOut16(byte) {
   console.info(`typeof byte: ${typeof byte}, value: ${byte}`);
+  byte = Number(byte);
   // Send 16 bits, MSB first
   for (let i = 15; i >= 0; i--) {
     dataPin.write(((byte >> i) & 1) ? 0 : 1);
