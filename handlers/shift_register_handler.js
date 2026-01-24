@@ -24,11 +24,15 @@ function setCustom(byte) {
 }
 //--------------Light Patterns-----------------\\
 async function runStartupRoutine() {
+    console.info('Running shift register startup routine');
+    allLightsOff();
+    await delay(500);
     shiftAllLightsOnce();
     await delay(1000);
     allLightsOn();
     await delay(1000);
     allLightsOff();
+    console.info('Shift register startup routine complete');
 }
 
 async function shiftAllLightsOnce(){
@@ -71,9 +75,9 @@ function pulse(pin) {
 }
 
 function init() {
-  dataPin.off();
-  clockPin.off();
-  latchPin.off();
+  dataPin.on();
+  clockPin.on();
+  latchPin.on();
 }
 
 //--------------Process Listeners-----------------\\
