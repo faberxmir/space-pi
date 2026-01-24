@@ -3,7 +3,7 @@ const os = require('os');
 const isRaspberryPi = os.platform() === 'linux' && os.arch() === 'arm64';
 
 if(isRaspberryPi){
-    const ledRoutes = require('./routers/led_routes');
+    const ledRoutes = require('../routers/led_routes');
     app.use(ledRoutes);
     console.info("Raspberry Pi detected. Initializing Pi-specific handlers.");
 } else {
