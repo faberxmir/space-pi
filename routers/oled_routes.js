@@ -5,7 +5,7 @@ router.get('/', (req, res)=>{
     res.sendFile("index.html");
 })
 
-router.get('/control', controlMessage)
+router.get('/setMessage', controlMessage)
 
 router.get('/setText',setOledText);
 
