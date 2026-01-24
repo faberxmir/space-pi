@@ -10,10 +10,13 @@ module.exports=(app) => {
         app.use('/led', require('../routers/led_routes'));
         
         try {
+            console.info("setting up OLED...");
             const oled = require('../handlers/oled_handler');
             if(oled.init()) {
                 console.info("OLED handler initialized successfully.");
                 app.use('/oled', require('../routers/oled_routes'));
+            } else {
+                console.warn("Oled setup failed.");
             }
         } catch (err) {
             console.error(Date.now(), '[PI_SETUP] Failed to initialize OLED handler:', err.message);
