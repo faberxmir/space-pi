@@ -1,6 +1,6 @@
 // Check if running on a Raspberry Pi and do setup that is specific to Raspberry Pi hardware
 const os = require('os');
-const isRaspberryPi = os.platform() === 'linux' && os.arch().startsWith === 'arm';
+const isRaspberryPi = os.platform() === 'linux' && os.arch().startsWith('arm');
 console.info(`OS Platform: ${os.platform()}, Architecture: ${os.arch()}\nRaspberry Pi detected: ${isRaspberryPi}`);
 
 module.exports=(app) => {
