@@ -2,7 +2,7 @@ console.info('Command report: led-controls enabled')
 const ledNumbers = document.querySelectorAll('#led-controls .numbered button');
 const ledControls = document.getElementById('#led-controls .controls button');
 
-ledButtons.forEach(button => {
+ledNumbers.forEach(button => {
     button.addEventListener('click', () => {
         const ledNumber = button.getAttribute('data-number');
         fetch(`/led/toggle?byte=${ledNumber}`)
