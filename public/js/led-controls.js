@@ -1,6 +1,6 @@
 console.info('Command report: led-controls enabled')
 const ledNumbers = document.querySelectorAll('#led-controls .numbered button');
-const ledControls = document.getElementById('#led-controls .controls button');
+const ledControls = document.querySelectorAll('#led-controls .controls button');
 
 ledNumbers.forEach(button => {
     button.addEventListener('click', () => {
