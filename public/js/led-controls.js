@@ -4,7 +4,7 @@ const ledButtons = document.querySelectorAll('#led-controls .col button');
 ledButtons.forEach(button => {
     button.addEventListener('click', () => {
         const ledNumber = button.getAttribute('data-number');
-        fetch(`/led/custom?byte=${ledNumber}`)
+        fetch(`/led/toggle?byte=${ledNumber}`)
         .then(response => {
             if(response.ok){
                 console.info(`LED ${ledNumber} toggled successfully`);

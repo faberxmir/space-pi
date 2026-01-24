@@ -6,22 +6,35 @@ const dataPin  = gpio.out(11);  // DIN
 const clockPin = gpio.out(13);  // CLK
 const latchPin = gpio.out(15);  // LATCH
 execSync('pinctrl -p set 3 a0; pinctrl -p set 5 a0');
+
+let state=0b0000000000000000;
+
 init();
 
 //--------------Light Patterns-----------------\\
 runStartupRoutine();
 
 function allLightsOn() {
-    shiftOut16(0b1111111111111111);
+    state=0b1111111111111111
+    shiftOut16(state);
 
 }
 function allLightsOff() {
-    shiftOut16(0b0000000000000000);
+  state=0b0000000000000000;
+    shiftOut16(state);
 }
 function setCustom(byte) {
+    state=byte;
     shiftOut16(byte);
 
 }
+
+function toggleLight(byte) {
+    state=state ^ byte;
+    shiftOut16(state);
+}
+
+
 //--------------Light Patterns-----------------\\
 async function runStartupRoutine() {
     console.info('Running shift register startup routine');
@@ -95,4 +108,5 @@ module.exports={
     allLightsOn,
     knightRider,
     setCustom,
+    toggleLight
 }

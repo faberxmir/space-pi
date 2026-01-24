@@ -1,7 +1,8 @@
 const {
     allLightsOff,
     allLightsOn,
-    setCustom
+    setCustom,
+    toggleLight
 } = require('../handlers/shift_register_handler');
 
 require('../handlers/oled_handler'); // Ensure OLED handler is initialized
@@ -29,8 +30,20 @@ const setLight = (req,res)=>{
     res.status(200).json({result:"ok"});
 }
 
+const toggleLight = (req, res) => {
+    const byte = req.query.byte;
+    const regex = /^0b[01]{16}$/
+    if (!regex.test(byte)) {
+        res.status(400).json({error:"Invalid byte format. Use 0b followed by 16 bits."});
+        return;
+    }
+    toggleLight(byte);
+    res.status(200).json({result:"ok"});
+}
+
 module.exports={
     lightsOn,
     lightsOff,
-    setLight
+    setLight,
+    toggleLight
 }
