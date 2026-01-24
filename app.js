@@ -2,16 +2,18 @@ require('dotenv').config();
 
 const express= require('express');
 const app = express();
-
-const html_router = require('./routers/default_router');
-const led_router = require('./routers/light_routes');
+const defaultRoutes = require('./routers/default_routes');
+require('./handlers/pi_setup');
 
 app.use(express.static('public'));
-app.use(led_router);
-app.use(html_router);
+app.set('view engine', 'ejs');
+
+app.use('/', defaultRoutes);
+
 
 const PORT = process.env.PORT;
 
 app.listen(PORT, ()=> {
-    console.info(`${process.env.APPNAME} is running!`);
-})
+    console.info(`${process.env.APPNAME} is running on port ${PORT}`);
+    console.info(`Mode: ${process.env.PRODUCTION?'Development':'Production'}`); 
+});
