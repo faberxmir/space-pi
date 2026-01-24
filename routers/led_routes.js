@@ -12,4 +12,6 @@ router.get('/off', lightsOff);
 
 router.get('/toggle', toggleLed);
 
+router.get('/set', setLight);
+
 module.exports=router;

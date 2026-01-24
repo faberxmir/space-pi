@@ -1,5 +1,6 @@
 console.info('Command report: led-controls enabled')
-const ledButtons = document.querySelectorAll('#led-controls .col button');
+const ledNumbers = document.querySelectorAll('#led-controls .numbered button');
+const ledControls = document.getElementById('#led-controls .controls button');
 
 ledButtons.forEach(button => {
     button.addEventListener('click', () => {
@@ -14,6 +15,23 @@ ledButtons.forEach(button => {
         })
         .catch(error => {
             console.error(`Error toggling LED ${ledNumber}:`, error);
+        });
+    });
+});
+
+ledControls.forEach(control => {
+    control.addEventListener('click', () => {
+    const ledState = control.getAttribute('data-number');
+    fetch(`/led/set?byte=${ledState}`)
+        .then(response => {
+            if(response.ok){
+                console.info(`LEDs set to ${ledState} successfully`);
+            } else {
+                console.error(`Failed to set LEDs to ${ledState}`);
+            }   
+        })
+        .catch(error => {
+            console.error(`Error setting LEDs to ${ledState}:`, error);
         });
     });
 });
