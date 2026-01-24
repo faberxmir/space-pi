@@ -12,11 +12,11 @@ init();
 runStartupRoutine();
 
 function allLightsOn() {
-    shiftOut16(255);
+    shiftOut16(0b1111111111111111);
 
 }
 function allLightsOff() {
-    shiftOut16(0);
+    shiftOut16(0b0000000000000000);
 }
 function setCustom(byte) {
     shiftOut16(byte);
@@ -41,6 +41,7 @@ async function shiftAllLightsOnce(){
         await delay(100);
     }
 }
+
 function knightRider() {
 
 }
@@ -63,21 +64,22 @@ function shiftOut8(byte) {
 function shiftOut16(byte) {
   // Send 16 bits, MSB first
   for (let i = 15; i >= 0; i--) {
-    dataPin.write((byte >> i) & 1);
+    dataPin.write(((byte >> i) & 1) ? 0 : 1);
     pulse(clockPin);
+    delay(2);
   }
   pulse(latchPin);
 }
 
 function pulse(pin) {
-  pin.on();
   pin.off();
+  pin.on();
 }
 
 function init() {
-  dataPin.on();
-  clockPin.on();
-  latchPin.on();
+  dataPin.on(); // sets din at TB chip to 0V
+  clockPin.on(); // sets clk at TB chip to 0V
+  latchPin.on(); // sets latch at TB chip to 0V
 }
 
 //--------------Process Listeners-----------------\\
