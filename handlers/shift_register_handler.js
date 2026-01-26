@@ -9,14 +9,10 @@ execSync('pinctrl -p set 3 a0; pinctrl -p set 5 a0');
 
 let state=0b0000000000000000;
 
-init().then(async () => {
-  //--------------Light Patterns-----------------\\
-  await runStartupRoutine();
-  console.info('Shift register initialized');
-}).catch((err) => {
-  console.error('Error initializing shift register:', err);
-});
+init();
 
+//--------------Light Patterns-----------------\\
+runStartupRoutine();
 
 function allLightsOn() {
     state=0b1111111111111111
@@ -27,9 +23,9 @@ function allLightsOff() {
     state=0b0000000000000000;
     shiftOut16(state);
 }
-async function setCustom(byte) {
+function setCustom(byte) {
     state=byte;
-    await shiftOut16(byte);
+    shiftOut16(byte);
 
 }
 
@@ -96,11 +92,12 @@ function sleepMicroseconds(us) {
   while (process.hrtime.bigint() < end);
 }
 
-async function init() {
+function init() {
   dataPin.on(); // sets din at TB chip to 0V
   clockPin.on(); // sets clk at TB chip to 0V
   latchPin.on(); // sets latch at TB chip to 0V
-  await setCustom(state);
+  shiftOut16(0); // initialize all outputs to low
+  shiftOut16(0); // extra to ensure
 }
 
 //--------------Process Listeners-----------------\\
