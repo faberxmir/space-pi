@@ -56,7 +56,7 @@ async function runStartupRoutine() {
 async function shiftAllLightsOnce(){
     for (let i = 0; i < 16; i++) {
         shiftOut16(1 << i);
-        await delay(100);
+        await delay(1000);
     }
 }
 
