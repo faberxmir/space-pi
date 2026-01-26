@@ -9,10 +9,10 @@ execSync('pinctrl -p set 3 a0; pinctrl -p set 5 a0');
 
 let state=0b0000000000000000;
 
-init().then(() => {
-  console.info('Shift register initialized');
+init().then(async () => {
   //--------------Light Patterns-----------------\\
-  runStartupRoutine();
+  await runStartupRoutine();
+  console.info('Shift register initialized');
 }).catch((err) => {
   console.error('Error initializing shift register:', err);
 });
