@@ -41,15 +41,15 @@ async function runStartupRoutine() {
     allLightsOff();
     await delay(500);
     allLightsOn();
-    await delay(1000);
+    await delay(500);
     allLightsOff();
     await delay(500);
-    shiftAllLightsOnce();
-    await delay(1000);
+    await shiftAllLightsOnce();
+    await delay(100);
     allLightsOn();
     await delay(1000);
     allLightsOff();
-    await delay(500);
+    await delay(1000);
     console.info('Shift register startup routine complete');
 }
 
@@ -69,23 +69,13 @@ function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function shiftOut8(byte) {
-  // Send 8 bits, MSB first
-  for (let i = 7; i >= 0; i--) {
-    dataPin.write((byte >> i) & 1);
-    pulse(clockPin);
-  }
-  // Latch output
-  pulse(latchPin);
-}
-
-function shiftOut16(byte) {
+async function shiftOut16(byte) {
   byte = Number(byte);
   // Send 16 bits, MSB first
   for (let i = 15; i >= 0; i--) {
     dataPin.write(((byte >> i) & 1) ? 0 : 1);
     pulse(clockPin);
-    delay(2);
+    await delay(2);
   }
   pulse(latchPin);
 }
