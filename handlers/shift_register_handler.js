@@ -12,7 +12,7 @@ let state=0b0000000000000000;
 init();
 
 //--------------Light Patterns-----------------\\
-runStartupRoutine();
+await runStartupRoutine();
 
 function allLightsOn() {
     state=0b1111111111111111
@@ -20,7 +20,7 @@ function allLightsOn() {
 
 }
 function allLightsOff() {
-  state=0b0000000000000000;
+    state=0b0000000000000000;
     shiftOut16(state);
 }
 function setCustom(byte) {
