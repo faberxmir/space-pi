@@ -82,7 +82,15 @@ async function shiftOut16(byte) {
 
 function pulse(pin) {
   pin.off();
+  sleepMicroseconds(5) ;
   pin.on();
+  sleepMicroseconds(5);
+}
+
+function sleepMicroseconds(us) {
+  const start = process.hrtime.bigint();
+  const end = start + BigInt(us) * BigInt(1000);
+  while (process.hrtime.bigint() < end);
 }
 
 function init() {
