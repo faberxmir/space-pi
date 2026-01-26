@@ -12,7 +12,7 @@ let state=0b0000000000000000;
 init();
 
 //--------------Light Patterns-----------------\\
-await runStartupRoutine();
+runStartupRoutine();
 
 function allLightsOn() {
     state=0b1111111111111111
@@ -40,11 +40,16 @@ async function runStartupRoutine() {
     console.info('Running shift register startup routine');
     allLightsOff();
     await delay(500);
+    allLightsOn();
+    await delay(1000);
+    allLightsOff();
+    await delay(500);
     shiftAllLightsOnce();
     await delay(1000);
     allLightsOn();
     await delay(1000);
     allLightsOff();
+    await delay(500);
     console.info('Shift register startup routine complete');
 }
 
