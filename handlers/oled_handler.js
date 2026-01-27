@@ -80,15 +80,12 @@ async function oledStartupRoutine(){
   const starttime = Date.now();
   if(!enabled || !oled) throw new Error('OLED not initialized'); 
   oled.clearDisplay();
-
   let prevX = null;
-  for(let x=0; x < oled.WIDTH-4; x+=4){
-    const t1 = Date.now();
-    let subcounter = 0;
-    do {
-      drawVerticalLine(x + subcounter);
-      if(prevX !== null) drawVerticalLine(x-4+subcounter, 0);
-    }while(subcounter++ < 4)
+  for(let x=0; x < oled.WIDTH-1; x++){
+  
+    drawVerticalLine(x);
+    if(prevX !== null) drawVerticalLine(prevX, 0);
+
     prevX = x;
     await asyncDelayMS(20); // control speed of animation
   }
