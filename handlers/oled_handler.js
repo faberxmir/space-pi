@@ -83,7 +83,7 @@ async function oledStartupRoutine(){
   for(let x=0; x < oled.WIDTH; x++){
     oled.clearDisplay();
     drawVerticalLine(x);
-    await asyncDelayMS(1000);
+    await asyncDelayMS(33);
   }
 }
 
