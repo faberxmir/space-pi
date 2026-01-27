@@ -1,10 +1,5 @@
 const router = require('express').Router();
-const { controlMessage, setOledText, init} = require('../controllers/oled_controller');
-
-
-if(!init()){
-    throw new Error("OLED initialization failed in oled_routes.js");
-}
+const { controlMessage, setOledText} = require('../controllers/oled_controller');
 
 router.get('/', (req, res)=>{
     res.sendFile("index.html");

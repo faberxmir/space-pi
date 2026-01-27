@@ -8,7 +8,7 @@ let i2cBus = null;
 let oled = null;
 let enabled = false;
 
-const init = () => {
+const oledInit = () => {
   console.info('initializing oled_handler.js');
   if( enabled ) {
     console.info('OLED already initialized');
@@ -77,5 +77,5 @@ function isEnabled() {
   return enabled;
 }
 
-module.exports = { init, isEnabled,setCenterMessage, setTextAtPosition };
+module.exports = { oledInit, isEnabled,setCenterMessage, setTextAtPosition };
 

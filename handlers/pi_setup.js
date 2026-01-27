@@ -11,10 +11,16 @@ module.exports=(app) => {
         console.info("/led routes added.");
 
         try {
+            require('../handlers/oled_handler').oledInit();
             app.use('/oled', require('../routers/oled_routes'));
             console.info("/oled routes added.");
         } catch (err) {
             console.error(Date.now(), '[PI_SETUP]', err.message);
+            if(process.env.PRODUCTION){
+                throw new Error('OLED initialization failed in production mode. Aborting startup.');
+            } else {
+                console.warn('Continuing in development mode despite OLED initialization failure.');
+            }
         }
 
 

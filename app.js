@@ -9,7 +9,13 @@ app.use(express.static('public'));
 app.set('view engine', 'ejs');
 
 app.use('/', defaultRoutes);
-pi_setup(app);
+
+try {
+    pi_setup(app);
+} catch (err) {
+    console.error(Date.now(), '[APP] Fatal error during Pi setup:', err.message);
+    process.exit(1);
+}
 
 
 const PORT = process.env.PORT;
