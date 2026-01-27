@@ -79,18 +79,21 @@ function isEnabled() {
 async function oledStartupRoutine(){
   if(!enabled || !oled) throw new Error('OLED not initialized'); 
   oled.clearDisplay();
+
+  let prevX = null;
   for(let x=0; x < oled.WIDTH; x++){
     const t1 = Date.now();
-    oled.clearDisplay();
+    if(prevX) drawVerticalLine(prevX, 0); // erase previous line
     drawVerticalLine(x);
     const t2 = Date.now();
     console.info(`Column ${x} drawn in ${t2-t1} ms`);
+    prevX = x;
     await asyncDelayMS(10);
   }
 }
 
-function drawVerticalLine(x) {
-  oled.drawLine(x, 0, x, oled.HEIGHT-1, 1);
+function drawVerticalLine(x, color=1) {
+  oled.drawLine(x, 0, x, oled.HEIGHT-1, color);
   oled.update();
 }
 
