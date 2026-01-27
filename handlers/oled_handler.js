@@ -82,7 +82,10 @@ async function oledStartupRoutine(){
   oled.clearDisplay();
   let prevX = null;
   for(let x=0; x < oled.WIDTH-1; x++){
-  
+    if(x % 2 === 0) {
+      drawHorizontalLine(x/2);
+      if(prevX !== null && prevX % 2 === 0) drawHorizontalLine(prevX/2, 0);
+    }
     drawVerticalLine(x);
     if(prevX !== null) drawVerticalLine(prevX, 0);
 
@@ -95,6 +98,11 @@ async function oledStartupRoutine(){
 
 function drawVerticalLine(x, color=1) {
   oled.drawLine(x, 0, x, oled.HEIGHT-1, color);
+  oled.update();
+}
+
+drawHorizontalLine(y, color=1) {
+  oled.drawLine(0, y, oled.WIDTH-1, y, color);
   oled.update();
 }
 
