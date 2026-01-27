@@ -83,8 +83,8 @@ async function oledStartupRoutine(){
   let prevX = null;
   for(let x=0; x < oled.WIDTH; x++){
     const t1 = Date.now();
-    if(prevX) drawVerticalLine(prevX, 0); // erase previous line
     drawVerticalLine(x);
+    if(prevX) drawVerticalLine(prevX, 0); // erase previous line
     const t2 = Date.now();
     console.info(`Column ${x} drawn in ${t2-t1} ms`);
     prevX = x;
