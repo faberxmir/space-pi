@@ -81,11 +81,15 @@ async function oledStartupRoutine(){
   oled.clearDisplay();
   let prevX = null;
   for(let x=0; x < oled.WIDTH-1; x++){
-
+    
+    let y = 0;
+    let prevY = null;
     if(x % 2 === 0) {
-      drawHorizontalLine(x/2);
+      drawHorizontalLine(y);
+      if(prevY !== null) drawHorizontalLine(prevY, 0);
+      prevY = y++;
+ 
     }
-    if(prevX !== null && prevX % 2 === 0) drawHorizontalLine(prevX/2, 0);
     
     drawVerticalLine(x);
     if(prevX !== null) drawVerticalLine(prevX, 0);
