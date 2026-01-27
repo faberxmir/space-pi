@@ -88,7 +88,7 @@ async function oledStartupRoutine(){
     const t2 = Date.now();
     console.info(`Column ${x} drawn in ${t2-t1} ms`);
     prevX = x;
-    await asyncDelayMS(10);
+    await asyncDelayMS(1);
   }
 }
 
