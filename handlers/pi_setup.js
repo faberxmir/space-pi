@@ -12,7 +12,7 @@ module.exports=(app) => {
 
         try {
             app.use('/oled', require('../routers/oled_routes'));
-            console.info("/oled routes added.");s
+            console.info("/oled routes added.");
         } catch (err) {
             console.error(Date.now(), '[PI_SETUP]', err.message);
         }

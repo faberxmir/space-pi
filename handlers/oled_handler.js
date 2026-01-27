@@ -1,5 +1,4 @@
 // oled_handler.js – eager, fail-fast singleton
-console.info('initializing oled_handler.js');
 
 const i2c = require('i2c-bus');
 const Oled = require('oled-i2c-bus');
@@ -10,8 +9,13 @@ let oled = null;
 let enabled = false;
 
 const init = () => {
-  if( enabled ) return true; // already initialized
+  console.info('initializing oled_handler.js');
+  if( enabled ) {
+    console.info('OLED already initialized');
+    return true; // already initialized
+  }
   try {
+    console.info('Opening I2C bus 1');
     i2cBus = i2c.openSync(1);
   } catch (e) {
     console.warn('[OLED] I2C bus open failed:', e.message);
@@ -24,6 +28,7 @@ const init = () => {
     enabled = true;
     
     try {
+      console.log('[OLED] Setting initial message');
       setTimeout(() => setCenterMessage('Paddeskip', 0, 0), 1000);
     } catch (e) {
       console.warn('[OLED] Initial message failed:', e.message);
