@@ -88,7 +88,7 @@ async function oledStartupRoutine(){
     drawVerticalLine(x);
     if(prevX !== null) drawVerticalLine(prevX, 0); // erase previous line
     const t2 = Date.now();
-
+    await asyncDelayMS(20); // control speed of animation
     console.info(`Column ${x} drawn in ${t2-t1} ms`);
     prevX = x;
     t3 = Date.now();
