@@ -87,7 +87,7 @@ async function oledStartupRoutine(){
     if(prevX !== null) drawVerticalLine(prevX, 0);
 
     prevX = x;
-    await asyncDelayMS(20); // control speed of animation
+    await asyncDelayMS(10); // control speed of animation
   }
 }
 
