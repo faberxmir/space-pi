@@ -7,9 +7,6 @@ console.info(`OS Platform: ${os.platform()}, Architecture: ${os.arch()}\nRaspber
 module.exports=async (app) => {
     if(isRaspberryPi){
         console.info("Initializing Pi-dependent handlers and adding pi-dependent routes...");
-        app.use('/led', require('../routers/led_routes'));
-        console.info("/led routes added.");
-
         try {
             await require('../handlers/oled_handler').oledInit();
             app.use('/oled', require('../routers/oled_routes'));
@@ -22,6 +19,9 @@ module.exports=async (app) => {
                 console.warn('Continuing in development mode despite OLED initialization failure.');
             }
         }
+        app.use('/led', require('../routers/led_routes'));
+        console.info("/led routes added.");
+
 
 
     } else {
