@@ -8,7 +8,7 @@ let i2cBus = null;
 let oled = null;
 let enabled = false;
 
-const oledInit = () => {
+const oledInit = async () => {
   console.info('initializing oled_handler.js');
   if( enabled ) {
     console.info('OLED already initialized');
@@ -26,9 +26,8 @@ const oledInit = () => {
     oled = new Oled(i2cBus, { width: 128, height: 64, address: 0x3C });
     oled.clearDisplay();
     enabled = true;
-    oledStartupRoutine();
+    await oledStartupRoutine();
     try {
-      console.log('[OLED] Setting initial message');
       setTimeout(() => setCenterMessage('Paddeskip', 0, 0), 1000);
     } catch (e) {
       console.warn('[OLED] Initial message failed:', e.message);
