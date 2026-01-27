@@ -28,7 +28,7 @@ function tone(pin, freq, durationMs) {
 }
 
 // Play a sequence of notes
-async function playTune(sequence) {
+function playTune(sequence) {
   for (const [note, dur] of sequence) {
     if (note === null) {
       // rest
