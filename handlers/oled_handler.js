@@ -79,11 +79,10 @@ function isEnabled() {
 
 function oledStartupRoutine(){
   if(!enabled || !oled) throw new Error('OLED not initialized'); 
-  oled.clearDisplay();
-  for(let x=0; x<oled.WIDTH; x++){
+  for(let x=0; x < oled.WIDTH; x++){
     oled.clearDisplay();
     drawVerticalLine(x);
-    wait(1000);
+    delayUS(40000);
   }
 }
 
@@ -92,9 +91,10 @@ function drawVerticalLine(x) {
   oled.update();
 }
 
-function wait(um) {
-  const start = Date.now();
-  while (Date.now() - start < um / 1000) {}
+function delayUS(us) {
+  const start = process.hrtime.bigint();
+  const end = start + BigInt(us) * BigInt(1000);
+  while (process.hrtime.bigint() < end);
 }
 
 module.exports = { oledInit, isEnabled,setCenterMessage, setTextAtPosition };
