@@ -26,7 +26,7 @@ const oledInit = () => {
     oled = new Oled(i2cBus, { width: 128, height: 64, address: 0x3C });
     oled.clearDisplay();
     enabled = true;
-    
+    oledStartupRoutine();
     try {
       console.log('[OLED] Setting initial message');
       setTimeout(() => setCenterMessage('Paddeskip', 0, 0), 1000);
@@ -75,6 +75,25 @@ function setTextAtPosition(text, x, y) {
 
 function isEnabled() {
   return enabled;
+}
+
+function oledStartupRoutine(){
+  if(!enabled || !oled) throw new Error('OLED not initialized'); 
+  oled.clearDisplay();
+  for(let x=0; x<oled.WIDTH; x++){
+    drawVerticalLine(x);
+    wait(1000);
+  }
+}
+
+function drawVerticalLine(x) {
+  oled.drawLine(x, 0, x, oled.HEIGHT-1, 1);
+  oled.update();
+}
+
+function wait(um) {
+  const start = Date.now();
+  while (Date.now() - start < um / 1000) {}
 }
 
 module.exports = { oledInit, isEnabled,setCenterMessage, setTextAtPosition };
