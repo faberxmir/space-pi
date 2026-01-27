@@ -80,8 +80,11 @@ async function oledStartupRoutine(){
   if(!enabled || !oled) throw new Error('OLED not initialized'); 
   oled.clearDisplay();
   for(let x=0; x < oled.WIDTH; x++){
+    const t1 = Date.now();
     oled.clearDisplay();
     drawVerticalLine(x);
+    const t2 = Date.now();
+    console.info(`Column ${x} drawn in ${t2-t1} ms`);
     await asyncDelayMS(10);
   }
 }
