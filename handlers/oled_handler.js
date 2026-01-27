@@ -87,7 +87,7 @@ async function oledStartupRoutine(){
     let subcounter = 0;
     do {
       drawVerticalLine(x + subcounter);
-      if(prevX !== null && prevX >= 4) drawVerticalLine(x-4+subcounter, 0);
+      if(prevX !== null) drawVerticalLine(x-4+subcounter, 0);
     }while(subcounter++ < 4)
     prevX = x;
     await asyncDelayMS(20); // control speed of animation
