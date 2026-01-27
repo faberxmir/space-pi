@@ -77,6 +77,7 @@ function isEnabled() {
 }
 
 async function oledStartupRoutine(){
+  const starttime = Date.now();
   if(!enabled || !oled) throw new Error('OLED not initialized'); 
   oled.clearDisplay();
 
@@ -93,6 +94,8 @@ async function oledStartupRoutine(){
     t3 = Date.now();
     console.info(`frame runtime including delay: ${t3-t1} ms`);
   }
+  const executionTime = (Date.now() - starttime)/1000;
+  console.log(executionTime + ' seconds for OLED startup routine');
 }
 
 function drawVerticalLine(x, color=1) {
