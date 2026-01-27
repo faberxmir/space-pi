@@ -77,12 +77,13 @@ function isEnabled() {
   return enabled;
 }
 
-function oledStartupRoutine(){
+async function oledStartupRoutine(){
   if(!enabled || !oled) throw new Error('OLED not initialized'); 
+  oled.clearDisplay();
   for(let x=0; x < oled.WIDTH; x++){
     oled.clearDisplay();
     drawVerticalLine(x);
-    delayUS(40000);
+    await asyncDelayMS(1000);
   }
 }
 
@@ -91,10 +92,13 @@ function drawVerticalLine(x) {
   oled.update();
 }
 
-function delayUS(us) {
-  const start = process.hrtime.bigint();
-  const end = start + BigInt(us) * BigInt(1000);
-  while (process.hrtime.bigint() < end);
+function delayMS(ms) {
+  const start = Date.now();
+  while (Date.now() - start < ms) {}
+}
+
+async function asyncDelayMS(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 module.exports = { oledInit, isEnabled,setCenterMessage, setTextAtPosition };
