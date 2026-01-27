@@ -83,12 +83,16 @@ async function oledStartupRoutine(){
   let prevX = null;
   for(let x=0; x < oled.WIDTH; x++){
     const t1 = Date.now();
+    
     drawVerticalLine(x);
-    if(prevX) drawVerticalLine(prevX, 0); // erase previous line
+    if(prevX !== null) drawVerticalLine(prevX, 0); // erase previous line
     const t2 = Date.now();
+
     console.info(`Column ${x} drawn in ${t2-t1} ms`);
     prevX = x;
-    //await asyncDelayMS(1);
+    await asyncDelayMS(20);
+    t3 = Date.now();
+    console.info(`frame runtime including delay: ${t3-t1} ms`);
   }
 }
 
