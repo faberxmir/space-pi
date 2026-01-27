@@ -89,6 +89,7 @@ async function oledStartupRoutine(){
     prevX = x;
     await asyncDelayMS(10); // control speed of animation
   }
+  oled.clearDisplay();
 }
 
 function drawVerticalLine(x, color=1) {
