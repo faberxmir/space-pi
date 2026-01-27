@@ -4,13 +4,14 @@ const isRaspberryPi = os.platform() === 'linux' && os.arch().startsWith('arm');
 console.info(`\n=== ${process.env.APPNAME} Pi Setup Handler ===`);
 console.info(`OS Platform: ${os.platform()}, Architecture: ${os.arch()}\nRaspberry Pi detected: ${isRaspberryPi}`);
 const oledHandler = require('../handlers/oled_handler');
-//const buzzerHandler = require('../handlers/buzzer_handler');
+
 
 
 module.exports=async (app) => {
     if(isRaspberryPi){
         console.info("Initializing Pi-dependent handlers and adding pi-dependent routes...");
         console.log('network interfaces ' + os.networkInterfaces());
+        app.use('/buzzer', require('../routers/buzzer_routes'));
         try {
             await oledHandler.oledInit();
             app.use('/oled', require('../routers/oled_routes'));

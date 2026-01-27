@@ -47,7 +47,7 @@ function sleep(ms) {
 }
 
 // Short ~10 sec happy tune
-const tune = [
+const TUNE = [
   ['E5', 300], ['E5', 300], [null, 150], ['E5', 300],
   [null, 150], ['C5', 300], ['E5', 300], [null, 150], ['G5', 600],
   [null, 200],
@@ -56,12 +56,14 @@ const tune = [
   ['A4', 150], ['G4', 300], ['E5', 300], ['G5', 300], ['A5', 600]
 ];
 
-const tune2 = [
+const ANTHEM = [
     ['C5', 300], ['E5', 300], ['G5', 300], ['C5', 600],
     ['B5', 300], ['A5', 300], ['G5', 300], ['E5', 600],
     ['C5', 300], ['E5', 300], ['G5', 300], ['C5', 600],
     ['B5', 300], ['A5', 300], ['G5', 300], ['E5', 600]
     ];
-console.log("Playing tune...");
-playTune(tune2);
-console.log("Done!");
+
+module.exports = {
+    playTune,
+    tunes: { TUNE, ANTHEM }
+};

@@ -62,8 +62,6 @@ function setCenterMessage(text) {
   const y = Math.max(0, Math.round((h - charH) / 2));
   oled.setCursor(x, y);
   oled.writeString(font, 1, text, 1, true);
-  // If your build requires it:
-  // oled.update();
 }
 
 function setTextAtPosition(text, x, y) {
@@ -88,7 +86,6 @@ async function oledStartupRoutine(){
       drawHorizontalLine(y);
       if(prevY !== null) drawHorizontalLine(prevY, 0);
       prevY = y++;
-      console.log('y:', y);
     }
     
     drawVerticalLine(x);
