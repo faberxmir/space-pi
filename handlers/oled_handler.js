@@ -84,13 +84,14 @@ async function oledStartupRoutine(){
 
     if(x % 2 === 0) {
       drawHorizontalLine(x/2);
-      if(prevX !== null && prevX % 2 === 0) drawHorizontalLine(prevX/2, 0);
     }
-
+    if(prevX !== null && prevX % 2 === 0) drawHorizontalLine(prevX/2, 0);
+    
     drawVerticalLine(x);
     if(prevX !== null) drawVerticalLine(prevX, 0);
 
     prevX = x;
+    oled.update();
     await asyncDelayMS(10); // control speed of animation
   }
   oled.clearDisplay();
@@ -99,12 +100,10 @@ async function oledStartupRoutine(){
 
 function drawVerticalLine(x, color=1) {
   oled.drawLine(x, 0, x, oled.HEIGHT-1, color);
-  oled.update();
 }
 
 function drawHorizontalLine(y, color=1) {
   oled.drawLine(0, y, oled.WIDTH-1, y, color);
-  oled.update();
 }
 
 function delayMS(ms) {
