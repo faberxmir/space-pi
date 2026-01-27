@@ -81,6 +81,7 @@ function oledStartupRoutine(){
   if(!enabled || !oled) throw new Error('OLED not initialized'); 
   oled.clearDisplay();
   for(let x=0; x<oled.WIDTH; x++){
+    oled.clearDisplay();
     drawVerticalLine(x);
     wait(1000);
   }
