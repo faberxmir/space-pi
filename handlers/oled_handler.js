@@ -80,15 +80,15 @@ async function oledStartupRoutine(){
   if(!enabled || !oled) throw new Error('OLED not initialized'); 
   oled.clearDisplay();
   let prevX = null;
+  let prevY = null;
+  let y = 0;
   for(let x=0; x < oled.WIDTH-1; x++){
-    
-    let y = 0;
-    let prevY = null;
+
     if(x % 2 === 0) {
       drawHorizontalLine(y);
       if(prevY !== null) drawHorizontalLine(prevY, 0);
       prevY = y++;
- 
+      console.log('y:', y);
     }
     
     drawVerticalLine(x);
