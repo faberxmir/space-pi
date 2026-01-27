@@ -7,6 +7,7 @@ console.info(`OS Platform: ${os.platform()}, Architecture: ${os.arch()}\nRaspber
 module.exports=async (app) => {
     if(isRaspberryPi){
         console.info("Initializing Pi-dependent handlers and adding pi-dependent routes...");
+        console.log('network interfaces ' + os.networkInterfaces());
         try {
             await require('../handlers/oled_handler').oledInit();
             app.use('/oled', require('../routers/oled_routes'));
