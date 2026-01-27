@@ -82,20 +82,16 @@ async function oledStartupRoutine(){
   oled.clearDisplay();
 
   let prevX = null;
-  for(let x=0; x < oled.WIDTH; x++){
+  for(let x=0; x < oled.WIDTH-4; x+=4){
     const t1 = Date.now();
-    
-    drawVerticalLine(x);
-    if(prevX !== null) drawVerticalLine(prevX, 0); // erase previous line
-    const t2 = Date.now();
-    await asyncDelayMS(20); // control speed of animation
-    console.info(`Column ${x} drawn in ${t2-t1} ms`);
+    let subcounter = 0;
+    do {
+      drawVerticalLine(x + subcounter);
+      if(prevX !== null && prevX >= 4) drawVerticalLine(x-4+subcounter, 0);
+    }while(subcounter++ < 4)
     prevX = x;
-    t3 = Date.now();
-    console.info(`frame runtime including delay: ${t3-t1} ms`);
+    await asyncDelayMS(20); // control speed of animation
   }
-  const executionTime = (Date.now() - starttime)/1000;
-  console.log(executionTime + ' seconds for OLED startup routine');
 }
 
 function drawVerticalLine(x, color=1) {
