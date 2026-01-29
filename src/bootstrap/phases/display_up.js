@@ -4,7 +4,7 @@ const { createOledService } = require("../../services/oled");
 async function displayUp(context) {
   context.oled = createOledService({
     i2cBusNumber: 1,
-    address: 0x3C,
+    address: 0x3c,
     logger: context.logger,
   });
 
