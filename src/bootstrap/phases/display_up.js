@@ -1,21 +1,21 @@
 // src/bootstrap/phases/display_up.js
 const { createOledService } = require("../../services/oled");
 
-async function displayUp(ctx) {
-  ctx.oled = createOledService({
+async function displayUp(context) {
+  context.oled = createOledService({
     i2cBusNumber: 1,
     address: 0x3C,
-    logger: ctx.logger,
+    logger: context.logger,
   });
 
-  const res = await ctx.oled.init();
+  const res = await context.oled.init();
 
   // If OLED is up, use it immediately for phase output
   if (res.ready) {
-    ctx.oled.phase("DISPLAY_UP");
+    context.oled.phase("DISPLAY_UP");
   }
 
-  return ctx;
+  return context;
 }
 
 module.exports = { displayUp };
