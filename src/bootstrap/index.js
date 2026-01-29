@@ -5,7 +5,7 @@ const { displayUp } = require("./phases/display_up");
 
 async function bootstrap(context) {
   // OLED must come first
-  await displayUp(ctx);
+  await displayUp(context);
 
   // ... then the rest of your phases in order ...
   // await coreIoUp(ctx);
@@ -13,7 +13,7 @@ async function bootstrap(context) {
   // await routesUp(ctx);
   // await runtime(ctx);
 
-  return ctx;
+  return context;
 }
 
 module.exports = { bootstrap };
