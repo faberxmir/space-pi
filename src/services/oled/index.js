@@ -2,6 +2,7 @@
 
 const i2c = require("i2c-bus");
 const Oled = require("oled-i2c-bus");
+const font = require("oled-font-5x7");
 
 function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, height = 64, logger = console } = {}) {
   let i2cBus = null;
@@ -39,7 +40,7 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
 
     lines.forEach((text, idx) => {
       oled.setCursor(x, ys[idx] ?? 0);
-      oled.writeString(null, 1, text, 1, true);
+      oled.writeString(font, 1, text, 1, true);
     });
 
     state.last.lines = lines;
