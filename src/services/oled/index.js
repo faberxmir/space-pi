@@ -53,7 +53,7 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
 
       try {
         // Open I2C first (owned by this service)
-        i2cBus = await i2c.openPromisified(i2cBusNumber);
+        i2cBus = i2c.openSync(i2cBusNumber);
 
         // Create OLED instance
         oled = new Oled(i2cBus, {
