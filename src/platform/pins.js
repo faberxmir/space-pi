@@ -11,13 +11,13 @@ function resolvePins() {
   const pins = JSON.parse(JSON.stringify(defaults));
 
   // if envInt returns an integer, use it, else use defaults.
-  pins.TB.CLK.gpio   = envInt("PIN_TB_CLK")   ?? pins.TB.CLK.gpio;
-  pins.TB.LATCH.gpio = envInt("PIN_TB_LATCH") ?? pins.TB.LATCH.gpio;
-  pins.TB.DATA.gpio  = envInt("PIN_TB_DATA")  ?? pins.TB.DATA.gpio;
+  pins.TB.CLK.pin   = envInt("PIN_TB_CLK")   ?? pins.TB.CLK.pin;
+  pins.TB.LATCH.pin = envInt("PIN_TB_LATCH") ?? pins.TB.LATCH.pin;
+  pins.TB.DATA.pin  = envInt("PIN_TB_DATA")  ?? pins.TB.DATA.pin;
 
   // Buzzer override
-  pins.BUZZER.SIGNAL.gpio =
-    envInt("PIN_BUZZER") ?? pins.BUZZER.SIGNAL.gpio;
+  pins.BUZZER.SIGNAL.pin =
+    envInt("PIN_BUZZER") ?? pins.BUZZER.SIGNAL.pin;
 
   return pins;
 }

@@ -1,6 +1,6 @@
 // src/bootstrap/phases/core_io_up.js
 const { resolvePins } = require("../../platform/pins");
-const { createGpioManager } = require("../../platform/gpio");
+const { createPinManager } = require("../../platform/gpio");
 
 async function coreIoUp(context) {
   const log = context.logger ?? console;
@@ -11,11 +11,11 @@ async function coreIoUp(context) {
   const pins = resolvePins();
   context.pins = pins;
 
-  // 2. Create GPIO manager
-  const gpioManager = createGpioManager({ logger: log });
-  context.gpioManager = gpioManager;
+  // 2. Create PIN manager
+  const pinManager = createPinManager({ logger: log });
+  context.pinManager = pinManager;
 
-  context.gpio = {
+  context.pin = {
     TB: {},
     BUZZER: {},
   };
@@ -23,34 +23,34 @@ async function coreIoUp(context) {
   try {
     // 3. Claim TB pins
     for (const [name, def] of Object.entries(pins.TB)) {
-      if (def.gpio == null) {
-        throw new Error(`TB.${name} gpio not configured`);
+      if (def.pin == null) {
+        throw new Error(`TB.${name} not configured`);
       }
 
-      context.gpio.TB[name] = gpioManager.claim({
+      context.pin.TB[name] = pinManager.claim({
         name: `TB_${name}`,
-        gpio: def.gpio,
+        pinNumber: def.pin,
         idle: def.idle,
         owner: "TB",
       });
     }
 
     // 4. Claim buzzer pin
-    if (pins.BUZZER.SIGNAL.gpio == null) {
-      throw new Error("BUZZER.SIGNAL gpio not configured");
+    if (pins.BUZZER.SIGNAL.pin == null) {
+      throw new Error("BUZZER.SIGNAL pin not configured");
     }
 
-    context.gpio.BUZZER.SIGNAL = gpioManager.claim({
+    context.pin.BUZZER.SIGNAL = pinManager.claim({
       name: "BUZZER_SIGNAL",
-      gpio: pins.BUZZER.SIGNAL.gpio,
+      pinNumber: pins.BUZZER.SIGNAL.pin,
       idle: pins.BUZZER.SIGNAL.idle,
       owner: "BUZZER",
     });
 
-    context.oled?.module("GPIO", "OK");
-    log.info("[CORE_IO_UP] GPIO OK");
+    context.oled?.module("PIN", "OK");
+    log.info("[CORE_IO_UP] PINS OK");
   } catch (err) {
-    context.oled?.module("GPIO", "FAIL");
+    context.oled?.module("PIN", "FAIL");
     context.oled?.error(err.message);
     log.error("[CORE_IO_UP] failed", err);
     throw err;

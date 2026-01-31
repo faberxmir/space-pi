@@ -1,67 +1,66 @@
 // src/platform/gpio/index.js
 const r = require("array-gpio");
 
-function createGpioManager({ logger = console } = {}) {
-  const claimed = new Map(); // gpioNumber -> { name, owner, idle, pin }
+function createPinManager({ logger = console } = {}) {
+  const claimed = new Map(); // pinNumber -> { name, owner, idle, pin }
 
-  function claim({ name, gpio, owner, idle = 0 }) {
-    if (!Number.isInteger(gpio)) {
-      throw new Error(`GPIO for ${name} must be an integer. Got: ${gpio}`);
+  function claim({ name, pinNumber, owner, idle = 0 }) {
+    if (!Number.isInteger(pinNumber)) {
+      throw new Error(`Pin number for ${name} must be an integer. Got: ${pinNumber}`);
     }
 
-    if (claimed.has(gpio)) {
-      const prev = claimed.get(gpio);
+    if (claimed.has(pinNumber)) {
+      const prev = claimed.get(pinNumber);
       throw new Error(
-        `GPIO${gpio} already claimed by ${prev.owner} as ${prev.name}`
+        `PIN ${pinNumber} already claimed by ${prev.owner} as ${prev.name}`
       );
     }
 
     // Export pin as output and immediately set idle state
-    const pin = r.out(gpio);
-    pin.write(idle ? 1 : 0);
+    const output = r.out(pinNumber);
+    output.write(idle ? 1 : 0);
 
-    const record = { name, owner, idle: idle ? 1 : 0, gpio, pin };
-    claimed.set(gpio, record);
-
+    const record = { name, owner, idle: idle ? 1 : 0, pinNumber, output };
+    claimed.set(pinNumber, record);
     // Wrapper: expose safe operations only
     const wrapper = {
       name,
-      gpio,
+      pin: pinNumber,
       owner,
       idle: record.idle,
 
       high() {
-        pin.write(1);
+        output.write(1);
       },
 
       low() {
-        pin.write(0);
+        output.write(0);
       },
 
       write(v) {
-        pin.write(v ? 1 : 0);
+        output.write(v ? 1 : 0);
       },
 
       // Optional helper for clean pulse behavior in later modules
       pulse(ms = 1) {
-        pin.write(1);
-        setTimeout(() => pin.write(record.idle), ms);
+        output.write(1);
+        setTimeout(() => output.write(record.idle), ms);
       },
 
       // For debugging
       toString() {
-        return `${name} (GPIO${gpio}) owner=${owner} idle=${record.idle}`;
+        return `${name} (PIN${pinNumber}) owner=${owner} idle=${record.idle}`;
       },
     };
 
-    logger.info(`[GPIO] claimed ${wrapper.toString()}`);
+    logger.info(`[PIN] claimed ${wrapper.toString()}`);
     return wrapper;
   }
 
   function listClaims() {
-    return Array.from(claimed.values()).map(({ name, gpio, owner, idle }) => ({
+    return Array.from(claimed.values()).map(({ name, pin, owner, idle }) => ({
       name,
-      gpio,
+      pin,
       owner,
       idle,
     }));
@@ -73,4 +72,4 @@ function createGpioManager({ logger = console } = {}) {
   };
 }
 
-module.exports = { createGpioManager };
+module.exports = { createPinManager };
