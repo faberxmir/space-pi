@@ -1,5 +1,5 @@
 // src/platform/gpio/index.js
-const { Output } = require("array-gpio");
+const r = require("array-gpio");
 
 function createGpioManager({ logger = console } = {}) {
   const claimed = new Map(); // gpioNumber -> { name, owner, idle, pin }
@@ -17,7 +17,7 @@ function createGpioManager({ logger = console } = {}) {
     }
 
     // Export pin as output and immediately set idle state
-    const pin = new Output(gpio);
+    const pin = r.out(gpio);
     pin.write(idle ? 1 : 0);
 
     const record = { name, owner, idle: idle ? 1 : 0, gpio, pin };
