@@ -4,6 +4,21 @@ const i2c = require("i2c-bus");
 const Oled = require("oled-i2c-bus");
 const font = require("oled-font-5x7");
 
+// --- PATCH: prevent oled-i2c-bus busy-byte reads from crashing the process ---
+if (!Oled.__spacepi_patched_readI2C) {
+  const original = Oled.prototype._readI2C;
+  Oled.prototype._readI2C = function (fn) {
+    try {
+      return original.call(this, fn);
+    } catch (err) {
+      // Treat as "not busy" so _waitUntilReady can continue without crashing.
+      try { fn && fn(0); } catch (_) {}
+    }
+  };
+  Oled.__spacepi_patched_readI2C = true;
+}
+// --- END PATCH ---
+
 function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, height = 64, logger = console } = {}) {
   let i2cBus = null;
   let oled = null;
