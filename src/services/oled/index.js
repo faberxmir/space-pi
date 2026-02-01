@@ -124,7 +124,31 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
 
     getState() {
       return { ...state };
+    },    
+    async close() {
+      // Best-effort shutdown — must never throw
+      try {
+        if (oled) {
+          try { oled.clearDisplay(); } catch (_) {}
+          try { oled.turnOffDisplay(); } catch (_) {}
+        }
+      } catch (_) {}
+
+      try {
+        if (i2cBus) {
+          // i2c-bus closeSync exists; but close() works too depending on version
+          if (typeof i2cBus.closeSync === "function") i2cBus.closeSync();
+          else if (typeof i2cBus.close === "function") await i2cBus.close();
+        }
+      } catch (_) {}
+
+      oled = null;
+      i2cBus = null;
+      state.ready = false;
+
+      return { ...state };
     },
+
   };
 }
 

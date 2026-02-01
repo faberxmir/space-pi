@@ -58,9 +58,9 @@ function createPinManager({ logger = console } = {}) {
   }
 
   function listClaims() {
-    return Array.from(claimed.values()).map(({ name, pin, owner, idle }) => ({
+    return Array.from(claimed.values()).map(({ name, pinNumber, owner, idle }) => ({
       name,
-      pin,
+      pin: pinNumber,
       owner,
       idle,
     }));
