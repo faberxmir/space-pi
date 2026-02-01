@@ -5,7 +5,7 @@ const { createPinManager } = require("../../platform/gpio");
 async function coreIoUp(context) {
   const log = context.logger ?? console;
 
-  context.oled?.phase("CORE_IO_UP");
+  if(context.oled?.getState?.().ready) context.oled.phase("CORE_IO_UP");
 
   // 1. Resolve pin configuration
   const pins = resolvePins();
