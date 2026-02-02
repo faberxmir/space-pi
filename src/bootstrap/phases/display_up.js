@@ -14,7 +14,7 @@ async function displayUp(context) {
   // Showing OLED phase only if ready
   if (res.ready) {
     context.oled.phase("DISPLAY_UP");
-    context.lifecycle.register("oledShutdown", () => context.oled.close());
+    context.lifecycle.register("oled", () => context.oled.close());
   }
 
   return context;

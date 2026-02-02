@@ -26,7 +26,7 @@ async function main() {
   // Signals
   process.once("SIGINT", () => shutdown("SIGINT"));
   process.once("SIGTERM", () => shutdown("SIGTERM"));
-
+  process.once("beforeExit", async (code) => await shutdown(`beforeExit(${code})`));
   // Fatal errors
   process.once("uncaughtException", (err) => shutdown("uncaughtException", err));
   process.once("unhandledRejection", (err) => shutdown("unhandledRejection", err));
