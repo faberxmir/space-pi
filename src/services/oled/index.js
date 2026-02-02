@@ -33,7 +33,7 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
     assertReady();
 
     // Minimal, stable rendering: clear + write lines at fixed y positions
-    oled.clearDisplay();
+    oled.clearDisplay(true);
 
     // Default font in oled-i2c-bus is 5x7; spacing 10px works well.
     const x = 0;
@@ -66,7 +66,7 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
 
         oled = new Oled(i2cBus, { width, height, address });
 
-        // 🔴 kill any internal read/tick loop if present
+        // 🔴stop readticks to prevent race conditions on write.
         if (oled && typeof oled.stopScroll === "function") {
           try { oled.stopScroll(); } catch (_) {}
         }
@@ -79,6 +79,14 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
           oled._interval = null;
         }
 
+        // HARD BLOCK any reads (prevents i2cReadSync from ever being called)
+        if (oled && typeof oled._readI2C === "function") {
+          oled._readI2C = function () {
+            // no-op: we never need reads for SSD1306 framebuffer rendering
+            return Buffer.alloc(0);
+          };
+        }
+        
         // Init display + clear
         oled.turnOnDisplay();
         oled.clearDisplay();
