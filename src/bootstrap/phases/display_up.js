@@ -1,5 +1,5 @@
 // src/bootstrap/phases/display_up.js
-const { createOledService } = require("../../services/oled");
+const { createOledService } = require("../../services/oled/index");
 
 async function displayUp(context) {
     context.oled = createOledService({
