@@ -64,6 +64,21 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
           address,
         });
 
+        oled = new Oled(i2cBus, { width, height, address });
+
+        // 🔴 kill any internal read/tick loop if present
+        if (oled && typeof oled.stopScroll === "function") {
+          try { oled.stopScroll(); } catch (_) {}
+        }
+        if (oled && oled._timer) {
+          try { clearTimeout(oled._timer); } catch (_) {}
+          oled._timer = null;
+        }
+        if (oled && oled._interval) {
+          try { clearInterval(oled._interval); } catch (_) {}
+          oled._interval = null;
+        }
+
         // Init display + clear
         oled.turnOnDisplay();
         oled.clearDisplay();
