@@ -19,7 +19,7 @@ async function main() {
       await context.lifecycle?.closeAll?.(reason);
     } finally {
       // exit codes: 0 = clean, 1 = error
-      process.exit(err ? 1 : 0);
+      process.exitCode = err ? 1 : 0;
     }
   };
 
@@ -34,5 +34,5 @@ async function main() {
 
 main().catch((err) => {
   console.error("[MAIN] bootstrap failed", err);
-  process.exit(1);
+  throw err;
 });
