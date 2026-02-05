@@ -10,7 +10,7 @@ async function main() {
   // Boot the system
   await bootstrap(context);
   console.log("[MAIN] System boot complete!");
-  
+
   // Central shutdown handler
   const shutdown = async (reason, err) => {
     try {

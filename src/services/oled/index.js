@@ -64,8 +64,6 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
           address,
         });
 
-        oled = new Oled(i2cBus, { width, height, address });
-
         // stop readticks to prevent race conditions on write.
         if (oled && typeof oled.stopScroll === "function") {
           try { oled.stopScroll(); } catch (_) {}
