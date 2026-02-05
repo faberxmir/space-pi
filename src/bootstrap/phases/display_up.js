@@ -8,14 +8,14 @@ async function displayUp(context) {
     logger: context.logger,
   });
 
-  const res = await context.oled.init();
+  const res = await context.oled?.init();
 
   // Register shutdown only if initialized successfully
   // Showing OLED phase only if ready
-  if (res.ready) {
+  if (res?.ready) {
     context.lifecycle.register("oled", () => context.oled.close());
     context.oled.phase("DISPLAY_UP");
-  }
+  } else throw new Error("OLED initialization failed");
 
   return context;
 }
