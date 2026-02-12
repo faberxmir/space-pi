@@ -67,29 +67,8 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
           address,
         });
 
-        // stop readticks to prevent race conditions on write.
-        // if (oled && typeof oled.stopScroll === "function") {
-        //   try { oled.stopScroll(); } catch (_) {}
-        // }
-        // if (oled && oled._timer) {
-        //   try { clearTimeout(oled._timer); } catch (_) {}
-        //   oled._timer = null;
-        // }
-        // if (oled && oled._interval) {
-        //   try { clearInterval(oled._interval); } catch (_) {}
-        //   oled._interval = null;
-        // }
-
-        // HARD BLOCK any reads (prevents i2cReadSync from ever being called)
-        if (oled && typeof oled._readI2C === "function") {
-          oled._readI2C = function () {
-            // no-op: we never need reads for SSD1306 framebuffer rendering
-            return Buffer.alloc(0);
-          };
-        }
 
         // Init display + clear
-        oled.turnOffDisplay();
         oled.clearDisplay();
         oled.turnOnDisplay();
 
