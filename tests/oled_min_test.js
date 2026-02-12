@@ -18,7 +18,7 @@ const {createOledService} = require("../src/services/oled/index");
     oled.write("Hello, OLED!", "Line 2", "Line 3");
 
     setTimeout(() => {
-        oled.shutdown();
+        oled.close();
         console.log("OLED test completed");
     }, 5000);
 })().catch(e => {
