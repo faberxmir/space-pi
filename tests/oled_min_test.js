@@ -23,5 +23,6 @@ const {createOledService} = require("../src/services/oled/index");
     }, 5000);
 })().catch(e => {
     console.error("OLED test failed:", e);
+    oled?.shutdown?.();
     process.exit(1);
 });
