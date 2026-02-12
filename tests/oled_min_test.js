@@ -15,7 +15,7 @@ const {createOledService} = require("../src/services/oled/index");
 
 
     oled.phase("TEST_PHASE");
-    oled.render(["Hello, OLED!", "Line 2", "Line 3"]);
+    oled.write("Hello, OLED!", "Line 2", "Line 3");
 
     setTimeout(() => {
         oled.shutdown();
