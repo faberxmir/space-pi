@@ -81,12 +81,12 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
         // }
 
         // HARD BLOCK any reads (prevents i2cReadSync from ever being called)
-        // if (oled && typeof oled._readI2C === "function") {
-        //   oled._readI2C = function () {
-        //     // no-op: we never need reads for SSD1306 framebuffer rendering
-        //     return Buffer.alloc(0);
-        //   };
-        // }
+        if (oled && typeof oled._readI2C === "function") {
+          oled._readI2C = function () {
+            // no-op: we never need reads for SSD1306 framebuffer rendering
+            return Buffer.alloc(0);
+          };
+        }
 
         // Init display + clear
         oled.turnOffDisplay();
