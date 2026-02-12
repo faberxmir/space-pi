@@ -3,6 +3,7 @@ require("dotenv").config();
 const {createOledService} = require("../src/services/oled/index");
 
 (async () => {
+    console.log('Starting OLED minimal test');
     const oled = createOledService({
         i2cBusNumber: 1,
         address: 0x3c,
@@ -21,6 +22,7 @@ const {createOledService} = require("../src/services/oled/index");
         oled.close();
         console.log("OLED test completed");
     }, 5000);
+
 })().catch(e => {
     console.error("OLED test failed:", e);
     oled?.shutdown?.();
