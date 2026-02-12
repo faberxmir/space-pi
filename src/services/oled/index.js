@@ -86,8 +86,8 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
         }
 
         // Init display + clear
-        oled.turnOnDisplay();
         oled.clearDisplay();
+        oled.turnOnDisplay();
 
         state.ready = true;
         state.error = null;
