@@ -1,6 +1,5 @@
 // src/bootstrap/phases/core_io_up.js
 const { resolvePins } = require("../../platform/pins");
-const { createPinManager } = require("../../platform/gpio");
 
 async function coreIoUp(context) {
   const log = context.logger ?? console;
