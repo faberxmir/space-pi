@@ -8,7 +8,7 @@ const { createLifecycle } = require("./lifecycle");
 
 async function bootstrap(context) {
   context.lifecycle = createLifecycle({logger: context.logger});
-  context.pinManager = {gpio: createPinManager({ logger: context.logger })};
+  context.gpio = createPinManager({ logger: context.logger });
 
   await displayUp(context);
   await coreIoUp(context);
