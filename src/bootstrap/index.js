@@ -8,15 +8,14 @@ const { createLifecycle } = require("./lifecycle");
 
 async function bootstrap(context) {
   context.lifecycle = createLifecycle({logger: context.logger});
-  constext.pinManager = {gpio: createPinManager({ logger: context.logger })};
+  context.pinManager = {gpio: createPinManager({ logger: context.logger })};
 
-  //await coreIoUp(context);
   await displayUp(context);
+  await coreIoUp(context);
 
-  // ... then the rest of your phases in order ...
-  // await peripheralsUp(ctx);
-  // await routesUp(ctx);
-  // await runtime(ctx);
+  // await peripheralsUp(context);
+  // await routesUp(context);
+  // await runtime(context);
 
   return context;
 }

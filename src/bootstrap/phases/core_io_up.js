@@ -10,10 +10,6 @@ async function coreIoUp(context) {
   const pins = resolvePins();
   context.pins = pins;
 
-  // 2. Create PIN manager
-  const pinManager = createPinManager({ logger: log });
-  context.pinManager = pinManager;
-
   context.pin = {
     TB: {},
     BUZZER: {},
@@ -26,11 +22,12 @@ async function coreIoUp(context) {
         throw new Error(`TB.${name} not configured`);
       }
 
-      context.pin.TB[name] = pinManager.claim({
+      context.pin.TB[name] = context.gpio.claim({
         name: `TB_${name}`,
         pinNumber: def.pin,
         idle: def.idle,
         owner: "TB",
+        mode: "output",
       });
     }
 
@@ -39,11 +36,12 @@ async function coreIoUp(context) {
       throw new Error("BUZZER.SIGNAL pin not configured");
     }
 
-    context.pin.BUZZER.SIGNAL = pinManager.claim({
+    context.pin.BUZZER.SIGNAL = context.gpio.claim({
       name: "BUZZER_SIGNAL",
       pinNumber: pins.BUZZER.SIGNAL.pin,
       idle: pins.BUZZER.SIGNAL.idle,
       owner: "BUZZER",
+      mode: "output",
     });
 
     context.oled?.module("PIN", "OK");
