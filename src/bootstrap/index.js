@@ -1,7 +1,7 @@
 // src/bootstrap/index.js
 const { displayUp } = require("./phases/display_up");
 const { coreIoUp } = require("./phases/core_io_up");
-const { createPinManager } = require("../../platform/gpio");
+const { createPinManager } = require("../platform/gpio");
 const { createLifecycle } = require("./lifecycle");
 
 // ... other phase imports ...
