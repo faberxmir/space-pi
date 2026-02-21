@@ -115,7 +115,7 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
       logger.info(`[OLED] ${label}`);
       state.buffer.push(label);
       if(state.buffer.length > 3) state.buffer.shift();
-      render(normalizeLines([label]));
+      render(normalizeLines(state.buffer));
     },
 
     module(name, status) {
