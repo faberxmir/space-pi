@@ -1,35 +1,30 @@
 // tests/pwm-test.js
-const { Gpio } = require("pigpio");
+const pigpio = require('pigpio-client').pigpio;
 
-// Pick the GPIO pin you wired the buzzer signal to (BCM number).
-// From earlier context you used BCM18 for PWM in some tests sometimes,
-// but set this to the pin you actually use now.
+const gpio = pigpio({ host: 'localhost' });
+
+// Use the BCM number of your buzzer pin
 const BUZZER_GPIO = Number(process.env.BUZZER_GPIO ?? 18);
 
-const buzzer = new Gpio(BUZZER_GPIO, { mode: Gpio.OUTPUT });
+gpio.on('connected', () => {
+  console.log('[pigpiod] connected');
 
-function clamp(x, lo, hi) {
-  return Math.max(lo, Math.min(hi, x));
-}
+  const buzzer = gpio.gpio(BUZZER_GPIO);
 
-// pigpio hardware PWM:
-// - frequency in Hz
-// - dutyCycle in range 0..1_000_000 (1e6 = 100%)
-function playTone({ frequency, duty = 0.5, ms = 500 }) {
-  const dutyCycle = Math.round(clamp(duty, 0, 1) * 1_000_000);
+  const frequency = 880;        // Hz
+  const dutyCycle = 500000;     // 50% (range 0–1_000_000)
 
-  console.log(`[PWM] gpio=${BUZZER_GPIO} freq=${frequency}Hz duty=${duty} ms=${ms}`);
+  console.log(`[PWM] gpio=${BUZZER_GPIO} freq=${frequency}Hz`);
 
-  // Start PWM
   buzzer.hardwarePwmWrite(frequency, dutyCycle);
 
-  // Stop later (non-blocking)
   setTimeout(() => {
-    buzzer.hardwarePwmWrite(0, 0); // stop PWM
-    console.log("[PWM] stop");
+    buzzer.hardwarePwmWrite(0, 0);
+    console.log('[PWM] stop');
     process.exit(0);
-  }, ms).unref();
-}
+  }, 500);
+});
 
-// Example: A5 (880 Hz) for 0.5s
-playTone({ frequency: 880, duty: 0.5, ms: 500 });
+gpio.on('error', (err) => {
+  console.error('pigpio error:', err);
+});
