@@ -4,6 +4,8 @@ function createLedService({ data, clk, latch, logger }) {
         const start = Date.now();
         while (Date.now() - start < 1) {} // short delay to ensure pulse is registered (adjust as needed)
         line.write(0);
+        start = Date.now();
+        while (Date.now() - start < 1) {} // short delay to ensure pulse is registered (adjust as needed)
     }
     return {
         set(mask) {
