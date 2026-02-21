@@ -11,7 +11,7 @@ function createLedService({ data, clk, latch, logger }) {
         // Shift out MSB -> LSB (bit 15 down to 0)
         for (let bit = 15; bit >= 0; bit--) {
             const b = (value >> bit) & 1;
-            data.write(b);
+            data.write(b ? 0:1); // active low
             pulse(clk);
         }
 
