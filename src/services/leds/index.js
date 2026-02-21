@@ -1,6 +1,7 @@
 function createLedService({ data, clk, latch, logger }) {
     function pulse(line) {
         line.write(1);
+        for (let i = 0; i < 1000; i++); // crude delay
         line.write(0);
     }
     return {
