@@ -42,6 +42,8 @@ async function peripheralsUp(context) {
     context.leds?.allOn();
     await new Promise(r => setTimeout(r, 300));
     context.leds?.allOff();
+    await new Promise(r => setTimeout(r, 300));
+
   return context;
 }
 
