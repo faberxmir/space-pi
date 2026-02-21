@@ -39,7 +39,7 @@ async function peripheralsUp(context) {
     // TODO: register lifecycle shutdown handlers
     // TODO: optionally show OLED phase if ready
     context.oled?.phase("PERIPHERALS_UP");
-    context.buzzer.beep(200);
+    context.buzzer.beep(2000);
 
   return context;
 }
