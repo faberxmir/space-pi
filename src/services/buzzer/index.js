@@ -3,30 +3,22 @@ function createBuzzerService({ signal, logger }) {
   return {
     beep(ms = 150, hz=2000) {
       logger?.debug?.(`[BUZZER] beep for ${ms}ms at ${hz}Hz`);
-      signal.write(1);
-      if (timeout){
-        clearTimeout(timeout);
-        timeout = null;
-      } 
 
-      if(this.interval) {
-        clearInterval(this.interval);
-        this.interval = null;
-      }
-      let level = 0;
-      const halfPeriodMs = Math.max(1, Math.floor(1000 / (hz * 2)));
+      const halfPeriodNs = BigInt(Math.round(1e9 / (2 * hz)));
+      const stopAt = process.hrtime.bigint() + BigInt(ms) * 1_000_000n;
 
-      this._interval = setInterval(() => {
-        level ^= 1 - level; // toggle between 0 and 1
-        signal.write(level);
-      }, halfPeriodMs);
+      let next = process.hrtime.bigint();
+      let state = 0;
 
-       timeout = setTimeout(() => {
-      clearInterval(this._interval);
-        this._interval = null;
+      while (process.hrtime.bigint() < stopAt) {
+        const now = process.hrtime.bigint();
+        if (now >= next) {
+          state ^= 1; // toggle between 0 and 1
+          signal.write(state);
+          next += now + halfPeriodNs;
+        }
         signal.write(0);
-        timeout = null;
-      }, ms);
+      }
     },
     close() {
       if (timeout) clearTimeout(timeout);
