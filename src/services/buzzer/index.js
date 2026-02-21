@@ -1,8 +1,8 @@
 function createBuzzerService({ signal, logger }) {
   let timeout = null;
-  return {
-    beep(ms = 150, hz=2000) {
-      logger?.debug?.(`[BUZZER] beep for ${ms}ms at ${hz}Hz`);
+
+  function toneBlocking(ms, hz) {
+    logger?.debug?.(`[BUZZER] beep for ${ms}ms at ${hz}Hz`);
 
       const halfPeriodNs = BigInt(Math.round(1e9 / (2 * hz)));
       const stopAt = process.hrtime.bigint() + BigInt(ms) * 1_000_000n;
@@ -19,6 +19,13 @@ function createBuzzerService({ signal, logger }) {
         }
       }
       signal.write(0);
+  }
+  return {
+    beep(ms = 150, hz=2000) {
+      setImmediate(() => toneBlocking(ms, hz));
+    },
+    beepSync(ms = 150, hz=2000) {
+      toneBlocking(ms, hz);
     },
     close() {
       if (timeout) clearTimeout(timeout);
