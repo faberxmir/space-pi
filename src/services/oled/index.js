@@ -12,6 +12,7 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
   const state = {
     ready: false,
     error: null,
+    buffer: [],
     last: {
       phase: null,
       lines: [],
@@ -112,6 +113,8 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
       const label = `PHASE: ${String(name)}`;
       state.last.phase = label;
       logger.info(`[OLED] ${label}`);
+      state.buffer.push(label);
+      if(state.buffer.length > 3) state.buffer.shift();
       render(normalizeLines([label]));
     },
 

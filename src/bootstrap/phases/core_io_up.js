@@ -44,7 +44,6 @@ async function coreIoUp(context) {
       mode: "output",
     });
 
-    context.oled?.phase("CORE_IO_UP");
     log.info("CORE_IO_UP PINS OK");
   } catch (err) {
     context.oled?.module("PIN", "FAIL");
