@@ -19,7 +19,7 @@ async function peripheralsUp(context) {
       context.logger?.info?.("Shutting down LED service...");
       await context.leds.close();
     });
-        
+         
 
     context.buzzer = createBuzzerService({
       signal: context.pin.BUZZER.SIGNAL,
@@ -29,7 +29,7 @@ async function peripheralsUp(context) {
       context.logger?.info?.("Shutting down Buzzer service...");
       await context.buzzer.close();
     });
-    
+
     // TODO: create context.leds using already-claimed TB pins from coreIoUp
     // TODO: create context.buzzer using already-claimed buzzer pin from coreIoUp
 
