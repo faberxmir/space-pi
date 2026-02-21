@@ -24,6 +24,12 @@ function createLedService({ data, clk, latch, logger }) {
 
         logger?.debug?.(`[LEDS] set 0x${value.toString(16).padStart(4, "0")}`);
         },
+        allOn() {
+            this.set(0xffff);
+        },
+        allOff() {
+            this.set(0);
+        },
         close() {},
   };
 }
