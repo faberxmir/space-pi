@@ -14,6 +14,7 @@ async function peripheralsUp(context) {
       latch: context.pin.TB.LATCH,
       logger: context.logger,
     });
+    context.logger?.info?.("[PERIPHERALS_UP] leds service wired");
 
     context.lifecycle.register("leds", async () => {
       context.logger?.info?.("Shutting down LED service...");
@@ -25,6 +26,8 @@ async function peripheralsUp(context) {
       signal: context.pin.BUZZER.SIGNAL,
       logger: context.logger,
     });
+    context.logger?.info?.("[PERIPHERALS_UP] buzzer service wired");
+
     context.lifecycle.register("buzzer", async () => {
       context.logger?.info?.("Shutting down Buzzer service...");
       await context.buzzer.close();
@@ -36,7 +39,9 @@ async function peripheralsUp(context) {
     // TODO: register lifecycle shutdown handlers
     // TODO: optionally show OLED phase if ready
     context.oled?.phase("PERIPHERALS_UP");
-    context.logger?.info?.("[BOOT] Peripherals not initialized yet, skipping for now");
+    context.leds?.set?.(0b1111110000000111);
+    await new Promise(r => setTimeout(r, 300));
+    context.leds?.set?.(0);
   return context;
 }
 
