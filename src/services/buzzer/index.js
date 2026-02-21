@@ -1,9 +1,18 @@
 function createBuzzerService({ signal, logger }) {
+  let timeout = null;
   return {
     beep(ms = 50) {
-      throw new Error("Not implemented yet");
+      signal.write(1);
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        signal.write(0);
+      }, ms);
     },
-    close() {}
+    close() {
+      if (timeout) clearTimeout(timeout);
+      timeout = null;
+      signal.write(0);
+    }
   };
 }
 

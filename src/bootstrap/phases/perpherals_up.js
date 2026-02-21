@@ -39,10 +39,7 @@ async function peripheralsUp(context) {
     // TODO: register lifecycle shutdown handlers
     // TODO: optionally show OLED phase if ready
     context.oled?.phase("PERIPHERALS_UP");
-    context.leds?.allOn();
-    await new Promise(r => setTimeout(r, 300));
-    context.leds?.allOff();
-    await new Promise(r => setTimeout(r, 300));
+    context.buzzer.beep(200);
 
   return context;
 }
