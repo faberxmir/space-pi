@@ -8,6 +8,18 @@ async function displayUp(context) {
     logger: context.logger,
   });
 
+  context.gpio?.claim({
+    name: "i2c SDA",
+    pinNumber: 2,
+    mode: "passive",
+  });
+
+  context.gpio?.claim({
+    name: "i2c SCL",
+    pinNumber: 3,
+    mode: "passive",
+  });
+
   const res = await context.oled?.init();
 
   // Register shutdown only if initialized successfully

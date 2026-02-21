@@ -37,7 +37,7 @@ function createPinManager({ logger = console, chipIndex = 0 } = {}) {
       };
     }
 
-    // Output mode (implemented now)
+    // Output mode only for now. Input mode would require event handling and state tracking.
     if (mode !== "output") {
       throw new Error(`Unsupported mode: ${mode}. Supported: output, passive (input reserved for later).`);
     }

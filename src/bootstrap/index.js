@@ -12,8 +12,8 @@ async function bootstrap(context) {
 
   await displayUp(context);
   await coreIoUp(context);
-
-  // await peripheralsUp(context);
+  await peripheralsUp(context);
+  
   // await routesUp(context);
   // await runtime(context);
 
