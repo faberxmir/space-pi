@@ -15,7 +15,7 @@ async function peripheralsUp(context) {
       logger: context.logger,
     });
 
-    context.lifecycle.registerShutdownHandler("leds", async () => {
+    context.lifecycle.register("leds", async () => {
       context.logger?.info?.("Shutting down LED service...");
       await context.leds.close();
     });
@@ -25,7 +25,7 @@ async function peripheralsUp(context) {
       signal: context.pin.BUZZER.SIGNAL,
       logger: context.logger,
     });
-    context.lifecycle.registerShutdownHandler("buzzer", async () => {
+    context.lifecycle.register("buzzer", async () => {
       context.logger?.info?.("Shutting down Buzzer service...");
       await context.buzzer.close();
     });
