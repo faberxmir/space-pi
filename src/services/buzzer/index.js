@@ -15,10 +15,10 @@ function createBuzzerService({ signal, logger }) {
         if (now >= next) {
           state ^= 1; // toggle between 0 and 1
           signal.write(state);
-          next += now + halfPeriodNs;
+          next += halfPeriodNs;
         }
-        signal.write(0);
       }
+      signal.write(0);
     },
     close() {
       if (timeout) clearTimeout(timeout);
