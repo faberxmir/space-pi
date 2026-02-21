@@ -27,7 +27,7 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
     return lines
       .filter((v) => v !== undefined && v !== null)
       .map((v) => String(v))
-      .slice(0, 3);
+      .slice(0, 5); // Allow up to 5 lines
   }
 
   function render(lines) {
@@ -38,7 +38,7 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
 
     // Default font in oled-i2c-bus is 5x7; spacing 10px works well.
     const x = 0;
-    const ys = [0, 12, 24];
+    const ys = [0, 12, 24, 36, 48]; // Pre-calculated y positions for up to 5 lines
 
     lines.forEach((text, idx) => {
       oled.setCursor(x, ys[idx] ?? 0);
@@ -114,7 +114,7 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
       state.last.phase = label;
       logger.info(`[OLED] ${label}`);
       state.buffer.push(label);
-      if(state.buffer.length > 3) state.buffer.shift();
+      if(state.buffer.length > 5) state.buffer.shift();
       render(normalizeLines(state.buffer));
     },
 
