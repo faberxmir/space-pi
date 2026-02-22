@@ -28,9 +28,9 @@
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "i2c-bus": "^5.2.3",
+    "node-libgpiod": "^0.6.0",
     "oled-font-5x7": "^1.0.3",
     "oled-i2c-bus": "^1.0.12",
-    "onoff": "^6.0.3",
-    "array-gpio": "^1.7.4"
+    "onoff": "^6.0.3"
   }
 }
