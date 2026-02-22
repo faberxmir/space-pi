@@ -21,11 +21,15 @@ async function peripheralsUp(context) {
       await context.leds.close();
     });
          
-
-    context.buzzer = createBuzzerService({
-      signal: context.pin.BUZZER.SIGNAL,
+    const platformBuzzer = createPlatformBuzzer({
+      pinHandle: context.pin.BUZZER.SIGNAL,
       logger: context.logger,
     });
+    context.buzzer = createBuzzerService({
+      platformBuzzer,
+      logger: context.logger,
+    });
+
     context.logger?.info?.("[PERIPHERALS_UP] buzzer service wired");
 
     context.lifecycle.register("buzzer", async () => {
