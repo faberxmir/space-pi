@@ -1,5 +1,6 @@
 const {createLedService} = require("../../services/leds");
 const {createBuzzerService} = require("../../services/buzzer");
+const { createPlatformBuzzer } = require("../../platform/buzzer");
 
 // src/bootstrap/phases/peripherals_up.js
 async function peripheralsUp(context) {
