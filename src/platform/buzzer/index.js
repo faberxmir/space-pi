@@ -1,14 +1,14 @@
 // src/platform/buzzer/index.js
 const { pigpio } = require("pigpio-client");
 
-function createPlatformBuzzer({ pinHandle, host = "localhost", logger = console } = {}) {
+function createPlatformBuzzer({ pinHandle, host = "::1", logger = console } = {}) {
   if (!pinHandle || typeof pinHandle.pin !== "number") {
     throw new Error("[PLATFORM_BUZZER] missing pinHandle with .pin (passive claim handle)");
   }
 
   const pin = pinHandle.pin;
   const client = pigpio({ host });
-  
+
   client.on("error", (err) => {
     logger?.warn?.(`[PLATFORM_BUZZER] pigpio error: ${err?.message || err}`);
     // Force reconnect on next use
