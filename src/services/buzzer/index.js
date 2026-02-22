@@ -21,7 +21,7 @@ function createBuzzerService({ signal, logger }) {
       signal.write(0);
   }
   return {
-    beep(ms = 150, hz=2000) {
+    beepSync(ms = 150, hz=2000) {
       setImmediate(() => toneBlocking(ms, hz));
     },
     beepSync(ms = 150, hz=2000) {

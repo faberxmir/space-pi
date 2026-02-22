@@ -41,7 +41,7 @@ async function coreIoUp(context) {
       pinNumber: pins.BUZZER.SIGNAL.pin,
       idle: pins.BUZZER.SIGNAL.idle,
       owner: "BUZZER",
-      mode: "output",
+      mode: "passive", // Let buzzer service decide how to use it
     });
 
     log.info("CORE_IO_UP PINS OK");
