@@ -35,7 +35,7 @@ async function peripheralsUp(context) {
 
     context.lifecycle.register("buzzer", async () => {
       context.logger?.info?.("Shutting down Buzzer service...");
-      await context.buzzer.close();
+      await context.buzzerService.close();
     });
 
     // TODO: create context.leds using already-claimed TB pins from coreIoUp
