@@ -26,6 +26,7 @@ async function peripheralsUp(context) {
       pinHandle: context.pin.BUZZER.SIGNAL,
       logger: context.logger,
     });
+    await platformBuzzer.connect();
     context.buzzerService = createBuzzerService({
       platformBuzzer,
       logger: context.logger,
