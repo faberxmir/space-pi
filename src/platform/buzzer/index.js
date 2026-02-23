@@ -57,6 +57,9 @@ function createPlatformBuzzer({ pinHandle, host = "127.0.0.1", logger = console 
 
     return connecting;
   }
+  async function init() {
+    await connect();
+  }
 
   async function startTone(hz, duty = 0.5) {
     await connect();
@@ -77,7 +80,7 @@ function createPlatformBuzzer({ pinHandle, host = "127.0.0.1", logger = console 
     gpio = null;
   }
 
-  return { startTone, stop, close };
+  return { startTone, stop, close, init };
 }
 
 module.exports = { createPlatformBuzzer };
