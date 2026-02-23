@@ -15,7 +15,6 @@ async function bootstrap(context) {
   await displayUp(context);
   await coreIoUp(context);
   await peripheralsUp(context);
-  context.buzzerService.beep();
   await routesUp(context);
   
   // await runtime(context);
