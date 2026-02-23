@@ -4,6 +4,7 @@ const { coreIoUp } = require("./phases/core_io_up");
 const { peripheralsUp } = require("./phases/peripherals_up");
 const { createPinManager } = require("../platform/gpio");
 const { createLifecycle } = require("./lifecycle");
+const { routesUp } = require("./phases/routes_up");
 
 // ... other phase imports ...
 
@@ -14,8 +15,8 @@ async function bootstrap(context) {
   await displayUp(context);
   await coreIoUp(context);
   await peripheralsUp(context);
-
-  // await routesUp(context);
+  await routesUp(context);
+  
   // await runtime(context);
 
   return context;

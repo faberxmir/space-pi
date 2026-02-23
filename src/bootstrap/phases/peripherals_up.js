@@ -26,7 +26,7 @@ async function peripheralsUp(context) {
       pinHandle: context.pin.BUZZER.SIGNAL,
       logger: context.logger,
     });
-    context.buzzer = createBuzzerService({
+    context.buzzerService = createBuzzerService({
       platformBuzzer,
       logger: context.logger,
     });
@@ -44,7 +44,6 @@ async function peripheralsUp(context) {
     // TODO: register lifecycle shutdown handlers
     // TODO: optionally show OLED phase if ready
     context.oled?.phase("PERIPHERALS_UP");
-    context.buzzer.beep(2000, 880); // beep for 2 seconds at 880Hz on startup
 
   return context;
 }
