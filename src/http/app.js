@@ -2,6 +2,7 @@
 const express = require('express');
 const {createBuzzerRoutes} = require('./routes/buzzer_routes');
 const {createLedRoutes} = require('./routes/led_routes');
+const {createOledRoutes} = require('./routes/oled_routes');
 
 function createApp(context) {
     const app = express();
