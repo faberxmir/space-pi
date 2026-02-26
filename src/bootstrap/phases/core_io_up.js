@@ -4,7 +4,7 @@ const { resolvePins } = require("../../platform/pins");
 async function coreIoUp(context) {
   const log = context.logger ?? console;
 
-  if(context.oled?.getState?.().ready) context.oled.phase("CORE_IO_UP");
+  if(context.oledService?.getState?.().ready) context.oledService.phase("CORE_IO_UP");
 
   // 1. Resolve pin configuration
   const pins = resolvePins();
@@ -46,8 +46,8 @@ async function coreIoUp(context) {
 
     log.info("CORE_IO_UP PINS OK");
   } catch (err) {
-    context.oled?.module("PIN", "FAIL");
-    context.oled?.error(err.message);
+    context.oledService?.module("PIN", "FAIL");
+    context.oledService?.error(err.message);
     log.error("CORE_IO_UP failed", err);
     throw err;
   }
