@@ -106,7 +106,7 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
 
     setTextCenter(text) {
       assertReady();
-      clearDisplay();
+      oled.clearDisplay();
       const x = Math.max(0, Math.floor((width - text.length * 6) / 2)); // 6px per char with 1px spacing
         const y = Math.floor((height - 8) / 2); // 8px font height
       oled.setCursor(x, y);

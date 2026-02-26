@@ -1,6 +1,6 @@
-const router = require('express').Router();
 
 const createOledRoutes = ({oledService, logger}) => {
+    const router = require('express').Router();
     router.get('/setText/:text', (req, res) => {
         const text = req.params.text;
         oledService.setTextCenter(text);
