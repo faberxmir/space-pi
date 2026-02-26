@@ -2,9 +2,14 @@ const router = require('express').Router();
 
 function createLedRoutes({ledService, logger}) {
 
-    router.get('/', (req, res) => {
-        ledService?.toggle(); //default toggle when the route is accessed
-        res.json({ message: "LED routes are mounted!" });
+    router.get('/on', (req, res) => {
+        ledService?.allOn(); //default toggle when the route is accessed
+        res.json({ message: "LEDs turned on!" });
+    });
+
+    router.get('/off', (req, res) => {
+        ledService?.allOff();
+        res.json({ message: "LEDs turned off!" });
     });
 }
 
