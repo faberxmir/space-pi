@@ -10,14 +10,14 @@ async function displayUp(context) {
 
   context.gpio?.claim({
     name: "i2c SDA",
-    owner: "OLED",
+    owner: "OLED_SERVICE",
     pinNumber: 2,
     mode: "passive",
   });
 
   context.gpio?.claim({
     name: "i2c SCL",
-    owner: "OLED",
+    owner: "OLED_SERVICE",
     pinNumber: 3,
     mode: "passive",
   });

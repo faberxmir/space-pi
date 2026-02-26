@@ -6,7 +6,7 @@ async function routesUp(context) {
    let app = createApp(context);
     context.httpServer = createHttpServer(app, context.logger);
     context.httpServer.start();
-    context.oled.phase("ROUTES_UP");
+    context.oledService?.phase("ROUTES_UP");
 
     context.lifecycle.register("httpServer", context.httpServer.stop);
 }
