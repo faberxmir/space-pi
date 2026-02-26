@@ -11,6 +11,8 @@ function createLedRoutes({ledService, logger}) {
         ledService?.allOff();
         res.json({ message: "LEDs turned off!" });
     });
+
+    return router;
 }
 
 module.exports = {
