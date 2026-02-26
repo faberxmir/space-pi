@@ -2,7 +2,7 @@
 const { createOledService } = require("../../services/oled/index");
 
 async function displayUp(context) {
-    context.oled = createOledService({
+    context.oledService = createOledService({
     i2cBusNumber: 1,
     address: 0x3c,
     logger: context.logger,
@@ -22,7 +22,7 @@ async function displayUp(context) {
     mode: "passive",
   });
 
-  const res = await context.oled?.init();
+  const res = await context.oledService?.init();
 
   // Register shutdown only if initialized successfully
   // Showing OLED phase only if ready
@@ -31,7 +31,7 @@ async function displayUp(context) {
       context.logger?.info?.("Shutting down OLED service...");
       return context.oled.close();
     });
-    context.oled.phase("DISPLAY_UP");
+    context.oledService.phase("DISPLAY_UP");
   } else throw new Error("OLED initialization failed");
 
   return context;
