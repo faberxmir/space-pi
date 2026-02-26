@@ -8,6 +8,7 @@ function createApp(context) {
     app.use(express.json());
     app.use('/buzzer', createBuzzerRoutes({buzzerService: context.buzzerService, logger: context.logger}));
     app.use('/led', createLedRoutes({ledService: context.ledService, logger: context.logger}));
+    app.use('/oled', createOledRoutes({oledService: context.oledService, logger: context.logger}));
     return app;
 }
 
