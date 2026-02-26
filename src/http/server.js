@@ -6,7 +6,7 @@ function createHttpServer(app, logger ) {
         name: "httpServer",
         start() {
             if (server) {
-                logger?.warn?.("HTTP server is already running");
+                logger?.warn?.("A start attempt was made while the HTTP server is already running.");
                 return;
             }
             server = app.listen(PORT, () => {
