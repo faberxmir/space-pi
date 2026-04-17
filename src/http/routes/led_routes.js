@@ -12,6 +12,12 @@ function createLedRoutes({ledService, logger}) {
         res.json({ message: "LEDs turned off!" });
     });
 
+    router.get('/sequence', (req, res) => {
+        if (!ledService) return res.status(503).json({ error: "LED service not available" });
+        ledService.sequence(); // fire-and-forget
+        res.json({ message: "LED sequence started" });
+    });
+
     return router;
 }
 

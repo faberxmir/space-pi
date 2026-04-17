@@ -27,9 +27,9 @@ async function displayUp(context) {
   // Register shutdown only if initialized successfully
   // Showing OLED phase only if ready
   if (res?.ready) {
-    context.lifecycle.register("oled", () => {
+      context.lifecycle.register("oled", () => {
       context.logger?.info?.("Shutting down OLED service...");
-      return context.oled.close();
+      return context.oledService.close();
     });
     context.oledService.phase("DISPLAY_UP");
   } else throw new Error("OLED initialization failed");

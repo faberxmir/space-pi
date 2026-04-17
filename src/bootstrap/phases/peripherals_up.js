@@ -14,6 +14,7 @@ async function peripheralsUp(context) {
       clk: context.pin.TB.CLK,
       latch: context.pin.TB.LATCH,
       logger: context.logger,
+      activeBytes: Number(process.env.ACTIVE_BYTES),
     });
     context.logger?.info?.("[PERIPHERALS_UP] leds service wired");
 

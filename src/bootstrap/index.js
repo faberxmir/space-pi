@@ -11,6 +11,10 @@ const { routesUp } = require("./phases/routes_up");
 async function bootstrap(context) {
   context.lifecycle = createLifecycle({logger: context.logger});
   context.gpio = createPinManager({ logger: context.logger });
+  context.lifecycle.register("gpio", () => {
+    context.logger?.info?.("Releasing all GPIO pins...");
+    context.gpio.closeAll();
+  });
 
   await displayUp(context);
   await coreIoUp(context);
