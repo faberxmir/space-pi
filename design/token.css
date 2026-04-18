@@ -381,7 +381,3 @@ h1, h2, h3, .glow, .display {
   border: 0; border-top: 1px dashed var(--fg-4);
   margin: var(--sp-4) 0;
 }
-
-/* Links */
-a { color: var(--fg-1); text-decoration: none; }
-a:hover { text-shadow: var(--glow); }

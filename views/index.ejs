@@ -1,14 +1,96 @@
 <%- include('partials/head') %>
-<section class="std-width">
-    <h1>Welcome to the bridge!</h1>
-    <p>
-        2ITA wargames is the end goal of this project. The idea is to make this
-        into some kind of interactive game for students where they can "fight"
-        each other by logging on to the pi terminal. The idea is to connect all
-        of these to a LAN and then use network commands to discover each other
-        and get points by doing actions to each other. The idea isn't fully
-        sketched out yet — experimenting to see what we can do.
-    </p>
-    <p><a href="/api-docs">API documentation →</a></p>
-</section>
+<div class="shell">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark glow">ISS SUPERTOAD</div>
+      <div class="sub">// cockpit</div>
+    </div>
+    <div class="topbar-slots">
+      <div class="topbar-slot">
+        <div class="k">Stardate</div>
+        <div class="v" id="tb-stardate">—</div>
+      </div>
+      <div class="topbar-slot">
+        <div class="k">Sector</div>
+        <div class="v">—</div>
+      </div>
+    </div>
+    <div class="topbar-leds">
+      <span class="led led--ok">PWR</span>
+      <span class="led led--ok">NET</span>
+      <span class="led led--warn">CPU</span>
+      <a class="btn btn--ghost" href="/api-docs" style="padding:4px 10px; font-size:var(--fs-xs)">API DOCS</a>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="cockpit-main">
+
+    <!-- LEFT: Pilot card -->
+    <div class="pilot-col">
+      <div class="panel brackets">
+        <span class="br-bl"></span><span class="br-br"></span>
+        <div class="panel__header">
+          <span>pilot.id</span>
+          <span class="dots">· · ·</span>
+        </div>
+        <div class="pilot">
+          <div class="avatar">
+            <div class="reticle">
+              <div class="placeholder">?</div>
+            </div>
+            <div class="scan"></div>
+            <div class="caption">[ no photo on file ]</div>
+          </div>
+          <div>
+            <div class="callsign">CALLSIGN</div>
+            <div class="callsign-sub">Pilot · Unassigned</div>
+          </div>
+          <div class="kv"><span class="kv__k">Rank</span><span class="kv__v dim">—</span><span class="kv__u">—</span></div>
+          <div class="kv"><span class="kv__k">Squadron</span><span class="kv__v dim">—</span><span class="kv__u">—</span></div>
+          <div class="kv"><span class="kv__k">Clearance</span><span class="kv__v dim">—</span><span class="kv__u">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER: Placeholder -->
+    <div class="center-col">
+      <div class="panel placeholder-panel">
+        <div class="awaiting">// awaiting uplink</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- STATUS BAR -->
+  <div class="statusbar">
+    <div class="statusbar-left">
+      <span>SHELL <b>READY</b></span>
+      <span>USER <b>—</b></span>
+      <span>TTY <b>/dev/tty0</b></span>
+    </div>
+    <div class="statusbar-right">
+      <span>UTC <b id="sb-clock">00:00:00</b></span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function tick() {
+    const now = new Date();
+    document.getElementById('sb-clock').textContent =
+      pad(now.getUTCHours()) + ':' + pad(now.getUTCMinutes()) + ':' + pad(now.getUTCSeconds());
+
+    const start = Date.UTC(now.getUTCFullYear(), 0, 0);
+    const day = Math.floor((now - start) / 86400000);
+    const frac = ((now.getUTCHours()*3600 + now.getUTCMinutes()*60 + now.getUTCSeconds()) / 864).toFixed(0);
+    document.getElementById('tb-stardate').textContent =
+      (50000 + (now.getUTCFullYear()-2020)*1000 + day) + '.' + pad(frac);
+  }
+  tick(); setInterval(tick, 1000);
+</script>
 <%- include('partials/foot') %>

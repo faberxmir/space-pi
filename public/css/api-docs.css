@@ -1,0 +1,73 @@
+/* ========================================================================
+   API DOCS — page layout
+   ======================================================================== */
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--sp-7) var(--sp-6) var(--sp-8);
+}
+
+.page-header {
+  padding-bottom: var(--sp-4);
+  border-bottom: 1px dashed var(--fg-4);
+  margin-bottom: var(--sp-7);
+}
+.page-header h1 {
+  font-family: var(--font-display);
+  font-size: var(--fs-5xl);
+  margin: 0 0 var(--sp-2);
+  letter-spacing: 0.04em;
+}
+.page-header .sub {
+  font-size: var(--fs-xs);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+.doc-section {
+  margin-bottom: var(--sp-7);
+}
+.doc-section h2 {
+  font-family: var(--font-display);
+  font-size: var(--fs-3xl);
+  margin: 0 0 var(--sp-3);
+  letter-spacing: 0.06em;
+}
+
+.route-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.route-table th {
+  text-align: left;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  padding: var(--sp-2) var(--sp-3);
+  border-bottom: 1px solid var(--fg-4);
+  background: var(--bg-2);
+}
+.route-table td {
+  padding: var(--sp-3);
+  border-bottom: 1px dashed var(--fg-4);
+  font-size: var(--fs-sm);
+  color: var(--fg-2);
+  vertical-align: top;
+}
+.route-table tr:last-child td { border-bottom: 0; }
+.route-table code {
+  font-family: var(--font-mono);
+  color: var(--fg-1);
+  background: var(--bg-3);
+  padding: 1px 6px;
+}
+.method {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.14em;
+  color: var(--accent-hot);
+  text-transform: uppercase;
+}

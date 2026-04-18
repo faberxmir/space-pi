@@ -1,63 +1,94 @@
 <%- include('partials/head') %>
-<section class="std-width">
-    <h1>API Documentation</h1>
-    <p><a href="/">← Back to bridge</a></p>
+<div class="page">
 
+  <header class="page-header">
+    <div class="sub">// system document · classification: unlisted</div>
+    <h1 class="glow">API DOCS</h1>
+    <div class="sub">ISS SUPERTOAD · hardware control interface · <a href="/">← cockpit</a></div>
+  </header>
+
+  <section class="doc-section">
     <h2>Buzzer</h2>
-    <table>
-        <tr>
+    <div class="panel">
+      <div class="panel__header"><span>buzzer.routes</span><span class="dots">· · ·</span></div>
+      <table class="route-table">
+        <thead>
+          <tr>
             <th>Method</th>
             <th>Path</th>
             <th>Description</th>
-        </tr>
-        <tr>
-            <td>GET</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="method">GET</span></td>
             <td><code>/buzzer</code></td>
             <td>Trigger a short beep (150ms @ 2000Hz).</td>
-        </tr>
-    </table>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
+  <section class="doc-section">
     <h2>LEDs</h2>
-    <table>
-        <tr>
+    <div class="panel">
+      <div class="panel__header"><span>led.routes</span><span class="dots">· · ·</span></div>
+      <table class="route-table">
+        <thead>
+          <tr>
             <th>Method</th>
             <th>Path</th>
             <th>Description</th>
-        </tr>
-        <tr>
-            <td>GET</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="method">GET</span></td>
             <td><code>/led/on</code></td>
             <td>Turn all LEDs on.</td>
-        </tr>
-        <tr>
-            <td>GET</td>
+          </tr>
+          <tr>
+            <td><span class="method">GET</span></td>
             <td><code>/led/off</code></td>
             <td>Turn all LEDs off.</td>
-        </tr>
-        <tr>
-            <td>GET</td>
+          </tr>
+          <tr>
+            <td><span class="method">GET</span></td>
             <td><code>/led/sequence</code></td>
-            <td>
-                Run the sliding LED animation. A two-LED window sweeps forward
-                through all 9 active LEDs then back, 100ms per step (~1.8s total).
-                Returns immediately — animation runs in the background.
-                Concurrent calls are ignored until the current sequence finishes.
-            </td>
-        </tr>
-    </table>
+            <td>Sliding two-LED window sweeps forward through all 9 active LEDs then back (100ms/step, ~1.8s). Fire-and-forget — returns immediately. Concurrent calls are ignored.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
+  <section class="doc-section">
     <h2>OLED Display</h2>
-    <table>
-        <tr>
+    <div class="panel">
+      <div class="panel__header"><span>oled.routes</span><span class="dots">· · ·</span></div>
+      <table class="route-table">
+        <thead>
+          <tr>
             <th>Method</th>
             <th>Path</th>
             <th>Description</th>
-        </tr>
-        <tr>
-            <td>GET</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="method">GET</span></td>
             <td><code>/oled/setText/:text</code></td>
             <td>Display <code>:text</code> centered on the 128×64 OLED screen.</td>
-        </tr>
-    </table>
-</section>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer style="margin-top:var(--sp-8); padding-top:var(--sp-4); border-top:1px dashed var(--fg-4); font-size:var(--fs-xs); color:var(--fg-4); letter-spacing:0.18em; text-transform:uppercase;">
+    // end of transmission · supertoad/os
+  </footer>
+
+</div>
 <%- include('partials/foot') %>

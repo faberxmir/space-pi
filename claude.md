@@ -58,3 +58,6 @@ See `docs/pi-deploy.md` for the full deployment checklist.
 
 ## web server
 - each time we add routes for the API, also update the webpage documenting the routes.
+
+## design
+- instructions for visuals are in the design folder. 

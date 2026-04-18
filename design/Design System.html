@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="green">
+<head>
+<meta charset="UTF-8">
+<title>ISS SUPERTOAD :: Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/tokens.css">
+<style>
+  .page {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: var(--sp-7) var(--sp-6) var(--sp-8);
+  }
+  .banner {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: var(--sp-6);
+    padding-bottom: var(--sp-4);
+    border-bottom: 1px dashed var(--fg-4);
+    margin-bottom: var(--sp-7);
+  }
+  .banner h1 {
+    font-family: var(--font-display);
+    font-size: var(--fs-6xl);
+    margin: 0 0 var(--sp-2);
+    letter-spacing: 0.04em;
+  }
+  .banner .sub {
+    font-size: var(--fs-xs);
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+  }
+  .banner .meta {
+    font-size: var(--fs-xs);
+    text-align: right;
+    color: var(--fg-3);
+    line-height: 1.7;
+    letter-spacing: 0.08em;
+  }
+  .banner .meta .k { color: var(--fg-4); }
+  .banner .meta .v { color: var(--fg-1); }
+
+  .section {
+    margin-bottom: var(--sp-8);
+  }
+  .section__head {
+    display: grid;
+    grid-template-columns: 40px 1fr auto;
+    gap: var(--sp-3);
+    align-items: end;
+    margin-bottom: var(--sp-4);
+  }
+  .section__num {
+    font-family: var(--font-display);
+    font-size: var(--fs-3xl);
+    color: var(--fg-3);
+    line-height: 1;
+  }
+  .section__title {
+    font-size: var(--fs-lg);
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    color: var(--fg-1);
+  }
+  .section__desc {
+    font-size: var(--fs-xs);
+    color: var(--fg-3);
+    text-align: right;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* Palette */
+  .palette-row {
+    display: grid;
+    grid-template-columns: 160px repeat(5, 1fr);
+    gap: var(--sp-2);
+    align-items: stretch;
+    margin-bottom: var(--sp-2);
+  }
+  .palette-row__label {
+    display: flex; flex-direction: column; justify-content: center;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+    padding: var(--sp-2) var(--sp-3);
+    border-left: 2px solid var(--fg-1);
+  }
+  .swatch {
+    height: 76px;
+    padding: var(--sp-2) var(--sp-3);
+    display: flex; flex-direction: column; justify-content: space-between;
+    border: 1px solid var(--fg-4);
+    font-size: var(--fs-xs);
+    font-family: var(--font-mono);
+  }
+  .swatch .top  { display: flex; justify-content: space-between; color: var(--fg-1); }
+  .swatch .hex  { color: var(--fg-3); letter-spacing: 0.08em; }
+  .swatch .name { color: var(--fg-2); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.12em; }
+
+  /* Swatch color presets (using current palette variables) */
+  .sw-bg0  { background: var(--bg-0); }
+  .sw-bg1  { background: var(--bg-1); }
+  .sw-bg2  { background: var(--bg-2); }
+  .sw-bg3  { background: var(--bg-3); }
+  .sw-grid { background: var(--grid); }
+  .sw-fg0  { background: color-mix(in srgb, var(--fg-0) 22%, var(--bg-0)); }
+  .sw-fg1  { background: color-mix(in srgb, var(--fg-1) 22%, var(--bg-0)); }
+  .sw-fg2  { background: color-mix(in srgb, var(--fg-2) 22%, var(--bg-0)); }
+  .sw-fg3  { background: color-mix(in srgb, var(--fg-3) 22%, var(--bg-0)); }
+  .sw-fg4  { background: color-mix(in srgb, var(--fg-4) 35%, var(--bg-0)); }
+  .sw-acc  { background: color-mix(in srgb, var(--accent) 22%, var(--bg-0)); }
+  .sw-hot  { background: color-mix(in srgb, var(--accent-hot) 22%, var(--bg-0)); }
+  .sw-warn { background: color-mix(in srgb, var(--warn) 22%, var(--bg-0)); }
+  .sw-alrt { background: color-mix(in srgb, var(--alert) 22%, var(--bg-0)); }
+  .sw-info { background: color-mix(in srgb, var(--info) 22%, var(--bg-0)); }
+
+  /* Palette switcher */
+  .pal-switch {
+    display: inline-flex;
+    border: 1px solid var(--fg-3);
+  }
+  .pal-switch button {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--fg-2);
+    border: 0;
+    padding: 6px 14px;
+    cursor: pointer;
+    border-right: 1px solid var(--fg-3);
+  }
+  .pal-switch button:last-child { border-right: 0; }
+  .pal-switch button[aria-pressed="true"] {
+    background: var(--fg-1); color: var(--bg-0);
+  }
+
+  /* Type specimens */
+  .spec-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-5);
+  }
+  .spec {
+    border: 1px solid var(--fg-4);
+    padding: var(--sp-5);
+    background: var(--bg-1);
+    position: relative;
+  }
+  .spec .label {
+    position: absolute; top: 8px; right: 12px;
+    font-size: var(--fs-xs); letter-spacing: 0.22em;
+    color: var(--fg-4); text-transform: uppercase;
+  }
+  .spec .giant {
+    font-family: var(--font-display);
+    font-size: 120px; line-height: 0.9;
+    color: var(--fg-1);
+    text-shadow: var(--glow);
+  }
+  .spec .mid {
+    font-family: var(--font-mono);
+    font-size: var(--fs-2xl);
+    color: var(--fg-1);
+    font-weight: 500;
+  }
+  .spec .body {
+    font-family: var(--font-mono);
+    font-size: var(--fs-md);
+    color: var(--fg-2);
+    margin-top: var(--sp-3);
+    max-width: 52ch;
+  }
+  .scale-row {
+    display: flex; align-items: baseline; gap: var(--sp-3);
+    border-bottom: 1px dashed var(--fg-4);
+    padding: var(--sp-2) 0;
+  }
+  .scale-row .tag2 {
+    font-size: var(--fs-xs); color: var(--fg-3); width: 72px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .scale-row .samp { color: var(--fg-1); flex: 1; }
+  .scale-row .px  { font-size: var(--fs-xs); color: var(--fg-4); }
+
+  /* Components grid */
+  .comp-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--sp-4);
+  }
+  .span-4  { grid-column: span 4; }
+  .span-5  { grid-column: span 5; }
+  .span-6  { grid-column: span 6; }
+  .span-7  { grid-column: span 7; }
+  .span-8  { grid-column: span 8; }
+  .span-12 { grid-column: span 12; }
+
+  .row { display: flex; gap: var(--sp-3); flex-wrap: wrap; align-items: center; }
+  .stack > * + * { margin-top: var(--sp-3); }
+
+  .ascii {
+    font-family: var(--font-mono);
+    white-space: pre;
+    color: var(--fg-3);
+    font-size: var(--fs-xs);
+    line-height: 1.35;
+  }
+
+  .icon-grid {
+    display: grid; grid-template-columns: repeat(8, 1fr); gap: var(--sp-3);
+  }
+  .icon-grid .cell {
+    border: 1px solid var(--fg-4);
+    aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 28px;
+    color: var(--fg-1);
+    text-shadow: var(--glow);
+  }
+  .icon-grid .lbl {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--fg-3);
+    text-align: center;
+    margin-top: 4px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .footer {
+    margin-top: var(--sp-8);
+    padding-top: var(--sp-4);
+    border-top: 1px dashed var(--fg-4);
+    display: flex; justify-content: space-between;
+    font-size: var(--fs-xs); color: var(--fg-4);
+    letter-spacing: 0.18em; text-transform: uppercase;
+  }
+
+  /* link to cockpit */
+  .jump {
+    display: inline-flex; align-items: center; gap: var(--sp-2);
+    text-decoration: none;
+    font-size: var(--fs-sm);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--fg-1);
+    padding: var(--sp-2) var(--sp-4);
+    border: 1px solid var(--fg-1);
+  }
+  .jump:hover { background: var(--fg-1); color: var(--bg-0); }
+</style>
+</head>
+<body>
+
+<!-- ================= PAGE ================= -->
+<div class="page">
+
+  <!-- Banner -->
+  <header class="banner">
+    <div>
+      <div class="sub">// System Document 001 · Classification: UNLISTED</div>
+      <h1 class="glow">SUPERTOAD/OS</h1>
+      <div class="sub" style="margin-top:var(--sp-2)">Onboard Design System · Retro-Terminal / CRT Phosphor</div>
+    </div>
+    <div class="meta">
+      <div><span class="k">VESSEL ·</span> <span class="v">ISS SUPERTOAD</span></div>
+      <div><span class="k">REV ·</span>    <span class="v">0.1.0-alpha</span></div>
+      <div><span class="k">STARDATE ·</span> <span class="v" id="stardate">—</span></div>
+      <div><span class="k">LINK ·</span>   <a class="jump" href="Cockpit.html" style="padding:2px 8px;">→ COCKPIT</a></div>
+    </div>
+  </header>
+
+  <!-- ========== 01 FOUNDATIONS ========== -->
+  <section class="section">
+    <div class="section__head">
+      <div class="section__num">01</div>
+      <div class="section__title">Foundations · Palette</div>
+      <div class="section__desc">four mission profiles</div>
+    </div>
+
+    <div class="panel brackets">
+      <span class="br-bl"></span><span class="br-br"></span>
+      <div class="panel__header">
+        <span>swatch.registry</span>
+        <span class="dots">· · ·</span>
+        <div class="pal-switch" id="pal" role="tablist" aria-label="Palette">
+          <button aria-pressed="true"  data-p="green">GREEN</button>
+          <button aria-pressed="false" data-p="amber">AMBER</button>
+          <button aria-pressed="false" data-p="blueprint">BLUEPRINT</button>
+          <button aria-pressed="false" data-p="cyberpunk">CYBERPUNK</button>
+        </div>
+      </div>
+      <div class="panel__body">
+        <div class="palette-row">
+          <div class="palette-row__label">Surfaces<br><span class="dim">bg / grid</span></div>
+          <div class="swatch sw-bg0"><div class="top"><span class="name">BG-0</span><span class="hex">--bg-0</span></div><span>void</span></div>
+          <div class="swatch sw-bg1"><div class="top"><span class="name">BG-1</span><span class="hex">--bg-1</span></div><span>panel</span></div>
+          <div class="swatch sw-bg2"><div class="top"><span class="name">BG-2</span><span class="hex">--bg-2</span></div><span>raised</span></div>
+          <div class="swatch sw-bg3"><div class="top"><span class="name">BG-3</span><span class="hex">--bg-3</span></div><span>input</span></div>
+          <div class="swatch sw-grid"><div class="top"><span class="name">GRID</span><span class="hex">--grid</span></div><span>lines</span></div>
+        </div>
+        <div class="palette-row">
+          <div class="palette-row__label">Phosphor<br><span class="dim">fg / text</span></div>
+          <div class="swatch sw-fg0"><div class="top"><span class="name">FG-0</span><span class="hex">--fg-0</span></div><span>hilite</span></div>
+          <div class="swatch sw-fg1"><div class="top"><span class="name">FG-1</span><span class="hex">--fg-1</span></div><span>primary</span></div>
+          <div class="swatch sw-fg2"><div class="top"><span class="name">FG-2</span><span class="hex">--fg-2</span></div><span>body</span></div>
+          <div class="swatch sw-fg3"><div class="top"><span class="name">FG-3</span><span class="hex">--fg-3</span></div><span>dim</span></div>
+          <div class="swatch sw-fg4"><div class="top"><span class="name">FG-4</span><span class="hex">--fg-4</span></div><span>disabled</span></div>
+        </div>
+        <div class="palette-row">
+          <div class="palette-row__label">Signals<br><span class="dim">status · alerts</span></div>
+          <div class="swatch sw-acc"><div class="top"><span class="name">ACCENT</span><span class="hex">--accent</span></div><span>primary</span></div>
+          <div class="swatch sw-hot"><div class="top"><span class="name">HOT</span><span class="hex">--accent-hot</span></div><span>highlight</span></div>
+          <div class="swatch sw-warn"><div class="top"><span class="name">WARN</span><span class="hex">--warn</span></div><span>caution</span></div>
+          <div class="swatch sw-alrt"><div class="top"><span class="name">ALERT</span><span class="hex">--alert</span></div><span>critical</span></div>
+          <div class="swatch sw-info"><div class="top"><span class="name">INFO</span><span class="hex">--info</span></div><span>telemetry</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 02 TYPE ========== -->
+  <section class="section">
+    <div class="section__head">
+      <div class="section__num">02</div>
+      <div class="section__title">Foundations · Type</div>
+      <div class="section__desc">VT323 + JetBrains Mono</div>
+    </div>
+
+    <div class="spec-grid">
+      <div class="spec">
+        <div class="label">DISPLAY · VT323</div>
+        <div class="giant">SUPERTOAD</div>
+        <div class="body">For hero readouts, stardates, massive numerics, and callsigns. Emulates a low-res CRT readout. Keep to 1–2 moments per screen.</div>
+      </div>
+      <div class="spec">
+        <div class="label">MONO · JETBRAINS</div>
+        <div class="mid">$ traceroute iss-supertoad.local</div>
+        <div class="body">Primary workhorse for all UI copy, data tables, command-line echo, button labels, and chrome. Default weight 400; use 500 sparingly for emphasis.</div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:var(--sp-4)">
+      <div class="panel__header"><span>scale.mono</span><span class="dots">· · ·</span></div>
+      <div class="panel__body">
+        <div class="scale-row"><span class="tag2">FS-XS</span><span class="samp" style="font-size:var(--fs-xs)">SYSTEM UPLINK STABLE · PKT LOSS 0.4%</span><span class="px">10 / 0.14em</span></div>
+        <div class="scale-row"><span class="tag2">FS-SM</span><span class="samp" style="font-size:var(--fs-sm)">cadet.odinsson@supertoad:~$ ip a show eth0</span><span class="px">11</span></div>
+        <div class="scale-row"><span class="tag2">FS-MD</span><span class="samp" style="font-size:var(--fs-md)">cadet.odinsson@supertoad:~$ ip a show eth0</span><span class="px">13 · default</span></div>
+        <div class="scale-row"><span class="tag2">FS-LG</span><span class="samp" style="font-size:var(--fs-lg)">cadet.odinsson@supertoad:~$ ip a show eth0</span><span class="px">15</span></div>
+        <div class="scale-row"><span class="tag2">FS-XL</span><span class="samp" style="font-size:var(--fs-xl)">SECTOR 7 · UPLINK ACQUIRED</span><span class="px">18</span></div>
+        <div class="scale-row"><span class="tag2">FS-2XL</span><span class="samp" style="font-size:var(--fs-2xl)">MISSION 04 // PORT SCAN</span><span class="px">24</span></div>
+        <div class="scale-row"><span class="tag2">FS-3XL · VT</span><span class="samp display" style="font-size:var(--fs-3xl)">STARDATE 54219.8</span><span class="px">32 display</span></div>
+        <div class="scale-row"><span class="tag2">FS-5XL · VT</span><span class="samp display" style="font-size:var(--fs-5xl)">ISS SUPERTOAD</span><span class="px">72 display</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 03 COMPONENTS ========== -->
+  <section class="section">
+    <div class="section__head">
+      <div class="section__num">03</div>
+      <div class="section__title">Components · Chrome &amp; Controls</div>
+      <div class="section__desc">panels · buttons · leds · tags</div>
+    </div>
+
+    <div class="comp-grid">
+
+      <!-- Panels -->
+      <div class="span-6">
+        <div class="panel brackets">
+          <span class="br-bl"></span><span class="br-br"></span>
+          <div class="panel__header">
+            <span>panel.with-brackets</span>
+            <span class="dots">· · ·</span>
+          </div>
+          <div class="panel__body">
+            <p style="margin:0">Default container. Header strip with active LED, corner brackets for hero panels. Dashed dividers internal.</p>
+            <hr class="hr">
+            <div class="kv"><span class="kv__k">Status</span><span class="kv__v">Nominal</span><span class="kv__u">ok</span></div>
+            <div class="kv"><span class="kv__k">Hull</span><span class="kv__v">98.2</span><span class="kv__u">%</span></div>
+            <div class="kv"><span class="kv__k">Coolant</span><span class="kv__v">12.4</span><span class="kv__u">L/s</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="span-6">
+        <div class="panel">
+          <div class="panel__header"><span>controls.buttons</span><span class="dots">· · ·</span></div>
+          <div class="panel__body stack">
+            <div class="row">
+              <button class="btn">ENGAGE</button>
+              <button class="btn btn--ghost">CANCEL</button>
+              <button class="btn btn--danger">ABORT</button>
+            </div>
+            <hr class="hr">
+            <div class="row">
+              <span class="led led--ok">PWR</span>
+              <span class="led led--ok">NET</span>
+              <span class="led led--warn">CPU</span>
+              <span class="led led--alert">HULL</span>
+              <span class="led led--off">AUX</span>
+            </div>
+            <hr class="hr">
+            <div class="row">
+              <span class="tag">READY</span>
+              <span class="tag tag--info">TELEMETRY</span>
+              <span class="tag tag--warn">DEGRADED</span>
+              <span class="tag tag--alert">BREACH</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Meters -->
+      <div class="span-5">
+        <div class="panel">
+          <div class="panel__header"><span>data.meters</span><span class="dots">· · ·</span></div>
+          <div class="panel__body stack">
+            <div>
+              <div class="row" style="justify-content:space-between">
+                <span class="uppercase dim" style="font-size:var(--fs-xs)">Oxygen</span>
+                <span class="mono" style="font-size:var(--fs-xs)">94 / 100</span>
+              </div>
+              <div class="meter" style="margin-top:6px"><div class="meter__fill" style="width:94%"></div></div>
+            </div>
+            <div>
+              <div class="row" style="justify-content:space-between">
+                <span class="uppercase dim" style="font-size:var(--fs-xs)">Reactor</span>
+                <span class="mono warn" style="font-size:var(--fs-xs)">61 / 100</span>
+              </div>
+              <div class="meter" style="margin-top:6px"><div class="meter__fill" style="width:61%; background: repeating-linear-gradient(90deg, var(--warn) 0 6px, transparent 6px 8px);"></div></div>
+            </div>
+            <div>
+              <div class="row" style="justify-content:space-between">
+                <span class="uppercase dim" style="font-size:var(--fs-xs)">Shields</span>
+                <span class="mono alert" style="font-size:var(--fs-xs)">22 / 100</span>
+              </div>
+              <div class="meter" style="margin-top:6px"><div class="meter__fill" style="width:22%; background: repeating-linear-gradient(90deg, var(--alert) 0 6px, transparent 6px 8px);"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Terminal -->
+      <div class="span-7">
+        <div class="panel">
+          <div class="panel__header"><span>terminal.shell</span><span class="dots">/dev/tty0</span></div>
+          <div class="panel__body" style="padding:0">
+            <div class="term">
+<span class="dim">── last login: stardate 54219.1 from 10.0.0.7 ──</span>
+<span class="prompt">cadet.odinsson@supertoad</span>:<span class="ok">~</span>$ <span class="flag">ping</span> -c 2 10.14.22.5
+PING 10.14.22.5 56 data bytes
+64 bytes from 10.14.22.5: icmp_seq=1 ttl=64 time=12.3 ms
+64 bytes from 10.14.22.5: icmp_seq=2 ttl=64 time=11.9 ms
+<span class="dim">--- 10.14.22.5 ping statistics ---</span>
+<span class="ok">2 packets transmitted, 2 received, 0% packet loss</span>
+<span class="prompt">cadet.odinsson@supertoad</span>:<span class="ok">~</span>$ <span class="flag">nmap</span> -p 22,80,443 10.14.22.5
+<span class="err">PORT     STATE   SERVICE</span>
+22/tcp   open    ssh
+80/tcp   closed  http
+443/tcp  open    https
+<span class="prompt">cadet.odinsson@supertoad</span>:<span class="ok">~</span>$ <span class="caret"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ASCII art / iconography -->
+      <div class="span-5">
+        <div class="panel">
+          <div class="panel__header"><span>asset.ascii · shuttle_silhouette</span><span class="dots">· · ·</span></div>
+          <div class="panel__body">
+<pre class="ascii glow" style="color: var(--fg-1); text-shadow: var(--glow);">
+              ___
+           .-'   '-.
+         .'  ISS    '.
+        /  SUPERTOAD  \
+       |  ___________  |
+       | |o o o o o o| |
+        \|___________|/
+       .-'|         |'-.
+      /   '---------'   \
+     /__/===[ /\ ]===\__\
+        '---'   '---'
+         //\\   //\\
+        //  \\ //  \\
+       '-----'     '-----'
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Glyph set -->
+      <div class="span-7">
+        <div class="panel">
+          <div class="panel__header"><span>glyphs.ui</span><span class="dots">· · ·</span></div>
+          <div class="panel__body">
+            <div class="icon-grid">
+              <div><div class="cell">▲</div><div class="lbl">ascend</div></div>
+              <div><div class="cell">▼</div><div class="lbl">descend</div></div>
+              <div><div class="cell">◉</div><div class="lbl">target</div></div>
+              <div><div class="cell">◇</div><div class="lbl">node</div></div>
+              <div><div class="cell">▰▰▱</div><div class="lbl">signal</div></div>
+              <div><div class="cell">⌘</div><div class="lbl">cmd</div></div>
+              <div><div class="cell">∎</div><div class="lbl">end</div></div>
+              <div><div class="cell">⟡</div><div class="lbl">beacon</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key-value table -->
+      <div class="span-6">
+        <div class="panel">
+          <div class="panel__header"><span>data.kv-rows</span><span class="dots">· · ·</span></div>
+          <div class="panel__body">
+            <div class="kv"><span class="kv__k">Callsign</span><span class="kv__v">ODINSSON · γ-04</span><span class="kv__u">ID</span></div>
+            <div class="kv"><span class="kv__k">Rank</span><span class="kv__v">Cadet · 2nd Class</span><span class="kv__u">—</span></div>
+            <div class="kv"><span class="kv__k">Sector</span><span class="kv__v">7G / tethys ring</span><span class="kv__u">—</span></div>
+            <div class="kv"><span class="kv__k">Uplink</span><span class="kv__v hot">stable</span><span class="kv__u">18 ms</span></div>
+            <div class="kv"><span class="kv__k">Packet Loss</span><span class="kv__v warn">0.4</span><span class="kv__u">%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dividers / ticks -->
+      <div class="span-6">
+        <div class="panel">
+          <div class="panel__header"><span>layout.dividers</span><span class="dots">· · ·</span></div>
+          <div class="panel__body stack">
+            <div class="divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+            <div class="divider">┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄</div>
+            <div class="divider">· · · · · · · · · · · · · · · · · · · · · · · · · · · · ·</div>
+            <div class="divider" style="color:var(--fg-1); text-shadow:var(--glow)">▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱</div>
+            <div>
+              <div class="ticks mono" style="font-size:var(--fs-xs); letter-spacing:0.2em">|····|····|····|····|····|····|····|</div>
+              <div class="ticks mono" style="font-size:var(--fs-xs); letter-spacing:0.2em">0   10   20   30   40   50   60   70</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== 04 MOTION + PRINCIPLES ========== -->
+  <section class="section">
+    <div class="section__head">
+      <div class="section__num">04</div>
+      <div class="section__title">Principles</div>
+      <div class="section__desc">how we dress the ship</div>
+    </div>
+
+    <div class="comp-grid">
+      <div class="span-4">
+        <div class="panel brackets"><span class="br-bl"></span><span class="br-br"></span>
+          <div class="panel__header"><span>001 · phosphor, not photoshop</span></div>
+          <div class="panel__body">
+            <p>Everything is transmitted, not rendered. Scanlines, a soft bloom on light text, and a near-imperceptible flicker should always be present. No drop shadows. No glassmorphism. No gradients except the phosphor glow itself.</p>
+          </div>
+        </div>
+      </div>
+      <div class="span-4">
+        <div class="panel brackets"><span class="br-bl"></span><span class="br-br"></span>
+          <div class="panel__header"><span>002 · monospace as grid</span></div>
+          <div class="panel__body">
+            <p>Type is the grid. Align by columns of 8. Prefer ASCII box-drawing and dashed dividers to boxes and borders. Corners are square. Radii are for enemies.</p>
+          </div>
+        </div>
+      </div>
+      <div class="span-4">
+        <div class="panel brackets"><span class="br-bl"></span><span class="br-br"></span>
+          <div class="panel__header"><span>003 · data is drama</span></div>
+          <div class="panel__body">
+            <p>Latencies, coordinates, packet loss and star dates are the ornament. If a slot looks empty, add a readout, not a decoration. Every number should feel real — use live values where you can.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <span>// end of transmission</span>
+    <span>supertoad/os · v0.1.0 · <span id="clock">00:00:00</span> utc</span>
+  </footer>
+
+</div>
+
+<script>
+  // Palette switcher
+  const palSwitch = document.getElementById('pal');
+  palSwitch.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-p]');
+    if (!btn) return;
+    const p = btn.dataset.p;
+    document.documentElement.dataset.palette = p;
+    [...palSwitch.querySelectorAll('button')].forEach(b => {
+      b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+    });
+  });
+
+  // Stardate + clock
+  function pad(n, w=2) { return String(n).padStart(w, '0'); }
+  function tick() {
+    const now = new Date();
+    const h = pad(now.getUTCHours());
+    const m = pad(now.getUTCMinutes());
+    const s = pad(now.getUTCSeconds());
+    document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+
+    // Fake stardate: year-day.hundredths-of-day
+    const start = Date.UTC(now.getUTCFullYear(), 0, 0);
+    const dayOfYear = Math.floor((now - start) / 86400000);
+    const frac = ((now.getUTCHours()*3600 + now.getUTCMinutes()*60 + now.getUTCSeconds()) / 864).toFixed(0);
+    const sd = (50000 + (now.getUTCFullYear()-2020)*1000 + dayOfYear) + '.' + pad(frac, 2);
+    document.getElementById('stardate').textContent = sd;
+  }
+  tick(); setInterval(tick, 1000);
+</script>
+</body>
+</html>

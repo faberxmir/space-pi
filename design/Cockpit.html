@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="green">
+<head>
+<meta charset="UTF-8">
+<title>ISS SUPERTOAD :: Cockpit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/tokens.css">
+<style>
+  html, body { height: 100%; }
+  body {
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Scale-to-fit stage: fixed 1600×900 cockpit canvas, letterboxed */
+  .stage {
+    width: 1600px; height: 900px;
+    transform-origin: center center;
+    position: relative;
+    flex: 0 0 auto;
+  }
+
+  .shell {
+    display: grid;
+    grid-template-rows: 60px 1fr 34px;
+    width: 1600px; height: 900px;
+    padding: 14px;
+    gap: 12px;
+  }
+
+  /* ========== TOP BAR ========== */
+  .topbar {
+    display: grid;
+    grid-template-columns: 240px 1fr 1fr 1fr 320px;
+    align-items: center;
+    gap: var(--sp-4);
+    padding: 0 var(--sp-4);
+    border: 1px solid var(--fg-4);
+    background: var(--bg-1);
+    position: relative;
+  }
+  .topbar::before {
+    content: ''; position: absolute; top: -1px; left: -1px; right: -1px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--fg-1), transparent);
+    opacity: 0.5;
+  }
+  .brand {
+    display: flex; align-items: baseline; gap: var(--sp-2);
+  }
+  .brand .mark {
+    font-family: var(--font-display);
+    font-size: 28px; line-height: 1;
+    color: var(--fg-1);
+    text-shadow: var(--glow);
+    letter-spacing: 0.04em;
+  }
+  .brand .sub {
+    font-size: var(--fs-xs);
+    letter-spacing: 0.22em;
+    color: var(--fg-3);
+    text-transform: uppercase;
+  }
+  .topbar .slot {
+    display: flex; flex-direction: column; justify-content: center;
+    border-left: 1px dashed var(--fg-4);
+    padding-left: var(--sp-4);
+    height: 40px;
+  }
+  .topbar .slot .k {
+    font-size: var(--fs-xs); letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg-3);
+  }
+  .topbar .slot .v {
+    font-family: var(--font-display); font-size: 22px; line-height: 1; color: var(--fg-1);
+    text-shadow: var(--glow);
+  }
+  .topbar .right {
+    display: flex; gap: var(--sp-3); align-items: center; justify-content: flex-end;
+  }
+
+  /* ========== MAIN GRID ========== */
+  .main {
+    display: grid;
+    grid-template-columns: 320px 1fr 360px;
+    gap: 10px;
+    min-height: 0;
+  }
+  .col { display: grid; gap: 10px; min-height: 0; }
+  .col--center { grid-template-rows: 1fr 260px; }
+
+  .panel { background: var(--bg-1); }
+  .panel__body { min-height: 0; }
+  .panel--flex { display: flex; flex-direction: column; min-height: 0; }
+  .panel--flex > .panel__body { flex: 1; overflow: hidden; min-height: 0; }
+
+  /* ---- Pilot card ---- */
+  .pilot {
+    display: flex; flex-direction: column; gap: var(--sp-3);
+    padding: var(--sp-4);
+  }
+  .avatar {
+    width: 100%;
+    aspect-ratio: 1;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 3px, rgba(125,255,154,0.05) 3px 4px),
+      linear-gradient(135deg, var(--bg-3), var(--bg-2));
+    border: 1px solid var(--fg-3);
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .avatar::before, .avatar::after {
+    content: ''; position: absolute; width: 16px; height: 16px;
+    border: 2px solid var(--fg-1); box-shadow: var(--glow);
+  }
+  .avatar::before { top: 6px; left: 6px; border-right: 0; border-bottom: 0; }
+  .avatar::after  { bottom: 6px; right: 6px; border-left: 0; border-top: 0; }
+  .avatar .reticle {
+    position: absolute; inset: 18px; border: 1px dashed var(--fg-4);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .avatar .placeholder {
+    font-family: var(--font-display);
+    font-size: 92px;
+    color: var(--fg-1);
+    text-shadow: var(--glow);
+    line-height: 1;
+  }
+  .avatar .caption {
+    position: absolute; bottom: 6px; left: 0; right: 0; text-align: center;
+    font-size: var(--fs-xs); color: var(--fg-3); letter-spacing: 0.22em; text-transform: uppercase;
+  }
+  .avatar .scan {
+    position: absolute; left: 0; right: 0; height: 2px;
+    background: var(--fg-1); box-shadow: 0 0 10px var(--fg-1);
+    animation: scan 4s linear infinite; opacity: 0.55;
+  }
+  @keyframes scan {
+    0% { top: 0; }
+    100% { top: 100%; }
+  }
+
+  .callsign {
+    font-family: var(--font-display);
+    font-size: 40px; line-height: 1;
+    color: var(--fg-1); text-shadow: var(--glow);
+  }
+  .callsign + .sub {
+    font-size: var(--fs-xs); color: var(--fg-3);
+    letter-spacing: 0.22em; text-transform: uppercase;
+  }
+
+  /* ---- Terminal (big) ---- */
+  .bigterm { height: 100%; display: flex; flex-direction: column; background: var(--bg-0); }
+  .bigterm__head {
+    display: flex; align-items: center; gap: var(--sp-3);
+    padding: 6px var(--sp-3);
+    border-bottom: 1px solid var(--fg-4);
+    font-size: var(--fs-xs); letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--fg-3);
+    background: var(--bg-1);
+  }
+  .bigterm__tabs { display: flex; gap: var(--sp-3); margin-left: var(--sp-3); }
+  .bigterm__tab { padding: 2px 8px; border: 1px solid var(--fg-4); color: var(--fg-3); }
+  .bigterm__tab[aria-selected="true"] { color: var(--fg-1); border-color: var(--fg-1); text-shadow: var(--glow); }
+  .bigterm__body {
+    flex: 1; overflow: auto; padding: var(--sp-4);
+    font-size: var(--fs-md);
+    color: var(--fg-2);
+    white-space: pre-wrap;
+    line-height: 1.55;
+  }
+  .bigterm__body .prompt { color: var(--fg-1); text-shadow: var(--glow); }
+  .bigterm__body .ok  { color: var(--fg-0); }
+  .bigterm__body .dim { color: var(--fg-3); }
+  .bigterm__body .flag { color: var(--warn); }
+  .bigterm__body .err { color: var(--alert); }
+  .bigterm__body .host{ color: var(--info); }
+  .bigterm__input {
+    display: flex; align-items: center; gap: var(--sp-2);
+    padding: var(--sp-3) var(--sp-4);
+    border-top: 1px solid var(--fg-4);
+    background: var(--bg-1);
+  }
+  .bigterm__input .ps1 { color: var(--fg-1); text-shadow: var(--glow); font-size: var(--fs-md); }
+  .bigterm__input .typed { color: var(--fg-1); font-size: var(--fs-md); }
+  .bigterm__input .caret::after {
+    content: '█';
+    color: var(--fg-1);
+    animation: blink 1s steps(1) infinite;
+    margin-left: 2px;
+  }
+  .bigterm__foot {
+    display: flex; gap: var(--sp-4); padding: 4px var(--sp-4);
+    border-top: 1px solid var(--fg-4);
+    background: var(--bg-1);
+    font-size: var(--fs-xs); color: var(--fg-3);
+    letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .bigterm__foot b { color: var(--fg-1); font-weight: 400; }
+
+  /* ---- Coord / starfield / schematic ---- */
+  .schematic {
+    position: relative;
+    height: 100%;
+    background: var(--bg-0);
+    overflow: hidden;
+  }
+  .starfield { position: absolute; inset: 0; }
+  .starfield .s {
+    position: absolute; width: 2px; height: 2px; background: var(--fg-1);
+    box-shadow: 0 0 4px var(--fg-1); opacity: 0.7;
+  }
+  .crosshair { position: absolute; inset: 0; pointer-events: none; }
+  .crosshair::before, .crosshair::after {
+    content: ''; position: absolute; background: var(--fg-4);
+  }
+  .crosshair::before { top: 50%; left: 0; right: 0; height: 1px; opacity: 0.5; }
+  .crosshair::after  { top: 0; bottom: 0; left: 50%; width: 1px;  opacity: 0.5; }
+  .schematic svg {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    display: block;
+  }
+  .sch-label {
+    position: absolute; font-size: var(--fs-xs); color: var(--fg-1);
+    letter-spacing: 0.16em; text-transform: uppercase; text-shadow: var(--glow);
+    padding: 2px 6px; background: rgba(10,20,16,0.7); border: 1px solid var(--fg-3);
+  }
+  .hud-tl { position: absolute; top: 10px; left: 12px; font-size: var(--fs-xs); color: var(--fg-3); letter-spacing: 0.16em; text-transform: uppercase; }
+  .hud-tr { position: absolute; top: 10px; right: 12px; font-size: var(--fs-xs); color: var(--fg-3); letter-spacing: 0.16em; text-transform: uppercase; text-align: right; }
+  .hud-bl { position: absolute; bottom: 10px; left: 12px; font-size: var(--fs-xs); color: var(--fg-3); letter-spacing: 0.16em; text-transform: uppercase; }
+  .hud-br { position: absolute; bottom: 10px; right: 12px; font-size: var(--fs-xs); color: var(--fg-3); letter-spacing: 0.16em; text-transform: uppercase; text-align: right; }
+  .hud-tl b, .hud-tr b, .hud-bl b, .hud-br b { color: var(--fg-1); font-weight: 400; text-shadow: var(--glow); }
+
+  /* ---- Mission panel ---- */
+  .mission {
+    padding: var(--sp-4);
+    display: flex; flex-direction: column; gap: var(--sp-3);
+  }
+  .mission .obj {
+    display: grid; grid-template-columns: 16px 1fr auto; gap: var(--sp-2);
+    font-size: var(--fs-sm); align-items: baseline;
+    padding: 4px 0;
+    border-bottom: 1px dashed var(--fg-4);
+  }
+  .mission .obj .box {
+    width: 12px; height: 12px; border: 1px solid var(--fg-1);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--fg-1); font-size: 11px; line-height: 1;
+  }
+  .mission .obj.done .box::before { content: '✕'; text-shadow: var(--glow); }
+  .mission .obj.done .t { color: var(--fg-3); text-decoration: line-through; text-decoration-color: var(--fg-4); }
+  .mission .obj .t { color: var(--fg-1); }
+  .mission .obj .k { color: var(--fg-3); font-size: var(--fs-xs); letter-spacing: 0.14em; text-transform: uppercase; }
+
+  /* ---- Status bar ---- */
+  .statusbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 var(--sp-4);
+    border: 1px solid var(--fg-4);
+    background: var(--bg-1);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--fg-3);
+  }
+  .statusbar .left, .statusbar .right { display: flex; gap: var(--sp-4); align-items: center; }
+  .statusbar b { color: var(--fg-1); font-weight: 400; }
+
+  /* ---- Tweaks ---- */
+  .tweaks {
+    position: fixed; right: 16px; bottom: 44px;
+    background: var(--bg-1); border: 1px solid var(--fg-1);
+    box-shadow: var(--glow);
+    width: 320px;
+    z-index: 9997;
+    display: none;
+  }
+  .tweaks[data-open="true"] { display: block; }
+  .tweaks__head {
+    padding: var(--sp-2) var(--sp-3);
+    font-size: var(--fs-xs); letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--fg-1); border-bottom: 1px solid var(--fg-4);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .tweaks__head button {
+    background: transparent; border: 0; color: var(--fg-3); cursor: pointer;
+    font-family: var(--font-mono);
+  }
+  .tweaks__body { padding: var(--sp-3); display: grid; gap: var(--sp-3); }
+  .tweaks__row { display: grid; gap: 4px; }
+  .tweaks__row label {
+    font-size: var(--fs-xs); letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-3);
+  }
+  .tweaks__row input {
+    background: var(--bg-3); border: 1px solid var(--fg-4);
+    color: var(--fg-1); font-family: var(--font-mono); font-size: var(--fs-sm);
+    padding: 6px 8px; outline: none;
+  }
+  .tweaks__row input:focus { border-color: var(--fg-1); box-shadow: var(--glow); }
+  .tweaks__pals { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+  .tweaks__pals button {
+    font-family: var(--font-mono); font-size: var(--fs-xs);
+    letter-spacing: 0.12em; text-transform: uppercase;
+    background: transparent; color: var(--fg-2);
+    border: 1px solid var(--fg-4); padding: 6px 4px; cursor: pointer;
+  }
+  .tweaks__pals button[aria-pressed="true"] {
+    background: var(--fg-1); color: var(--bg-0); border-color: var(--fg-1);
+  }
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+<div class="shell" data-screen-label="01 Cockpit">
+
+  <!-- ================= TOP BAR ================= -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark glow" id="tb-ship">ISS SUPERTOAD</div>
+    </div>
+    <div class="slot">
+      <div class="k">Stardate</div>
+      <div class="v" id="tb-stardate">—</div>
+    </div>
+    <div class="slot">
+      <div class="k">Sector</div>
+      <div class="v">7G · TETHYS RING</div>
+    </div>
+    <div class="slot">
+      <div class="k">Uplink</div>
+      <div class="v"><span class="led led--ok" style="font-size:inherit; letter-spacing:0">STABLE · 18 MS</span></div>
+    </div>
+    <div class="right">
+      <span class="led led--ok">PWR</span>
+      <span class="led led--ok">NET</span>
+      <span class="led led--warn">CPU</span>
+      <span class="led led--alert">HULL</span>
+      <a class="btn btn--ghost" href="Design System.html" style="padding:4px 10px; font-size:var(--fs-xs)">DESIGN SYS</a>
+    </div>
+  </div>
+
+  <!-- ================= MAIN ================= -->
+  <div class="main">
+
+    <!-- LEFT: Pilot + Mission -->
+    <div class="col">
+      <div class="panel brackets panel--flex" style="flex:0 0 auto">
+        <span class="br-bl"></span><span class="br-br"></span>
+        <div class="panel__header"><span>pilot.id</span><span class="dots">· · ·</span></div>
+        <div class="pilot">
+          <div class="avatar">
+            <div class="reticle">
+              <div class="placeholder" id="av-initials">O/04</div>
+            </div>
+            <div class="scan"></div>
+            <div class="caption">[ upload photo · 256×256 ]</div>
+          </div>
+
+          <div>
+            <div class="callsign" id="callsign">ODINSSON</div>
+            <div class="sub">Cadet · 2nd Class · γ-04</div>
+          </div>
+
+          <div class="kv"><span class="kv__k">Rank</span><span class="kv__v">Cadet II</span><span class="kv__u">—</span></div>
+          <div class="kv"><span class="kv__k">Squadron</span><span class="kv__v">GAMMA</span><span class="kv__u">—</span></div>
+          <div class="kv"><span class="kv__k">Commission</span><span class="kv__v">54109.2</span><span class="kv__u">SD</span></div>
+          <div class="kv"><span class="kv__k">Clearance</span><span class="kv__v warn">LVL-3</span><span class="kv__u">—</span></div>
+        </div>
+      </div>
+
+      <div class="panel panel--flex" style="flex:1 1 auto; min-height:0">
+        <div class="panel__header"><span>mission.current</span><span class="dots" id="mission-id">MSN-014</span></div>
+        <div class="mission">
+          <div>
+            <div class="uppercase dim" style="font-size:var(--fs-xs)">Briefing</div>
+            <div class="glow" id="mission-title" style="font-family:var(--font-display); font-size:28px; line-height:1; margin-top:4px">RECON: RELAY STATION 7G</div>
+          </div>
+          <p id="mission-body" style="margin:0; color: var(--fg-2); font-size:var(--fs-sm)">
+            Uplink to relay station before communications window closes. Map exposed services and report the breach vector.
+          </p>
+          <hr class="hr">
+          <div class="obj done"><span class="box"></span><span class="t">ICMP probe relay gateway</span><span class="k">+10</span></div>
+          <div class="obj done"><span class="box"></span><span class="t">Enumerate local interface</span><span class="k">+10</span></div>
+          <div class="obj"><span class="box"></span><span class="t">Traceroute to 10.14.22.5</span><span class="k">+15</span></div>
+          <div class="obj"><span class="box"></span><span class="t">Scan ports 22 · 80 · 443</span><span class="k">+20</span></div>
+          <div class="obj"><span class="box"></span><span class="t">File incident report</span><span class="k">+25</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER: Terminal + Schematic -->
+    <div class="col col--center">
+
+      <div class="panel panel--flex">
+        <div class="bigterm">
+          <div class="bigterm__head">
+            <span>/dev/tty0 · cadet.odinsson@supertoad</span>
+            <div class="bigterm__tabs">
+              <span class="bigterm__tab" aria-selected="true">SHELL</span>
+              <span class="bigterm__tab">LOGS</span>
+              <span class="bigterm__tab">BUFFER</span>
+            </div>
+            <span style="margin-left:auto">80×24 · UTF-8 · VT220</span>
+          </div>
+          <div class="bigterm__body" id="term-body"><span class="dim">── ISS SUPERTOAD · SHELL v0.4.1-alpha · last login: stardate 54219.1 from 10.0.0.7 ──
+── type 'help' for mission commands · 'objectives' to review brief          ──</span>
+
+<span class="prompt">cadet.odinsson@supertoad</span>:<span class="ok">~</span>$ <span class="flag">ip</span> a show eth0
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state <span class="ok">UP</span>
+    link/ether fc:aa:14:33:07:2b brd ff:ff:ff:ff:ff:ff
+    inet 10.0.0.42/24 brd 10.0.0.255 scope global dynamic eth0
+    inet6 fe80::feaa:14ff:fe33:72b/64 scope link
+
+<span class="prompt">cadet.odinsson@supertoad</span>:<span class="ok">~</span>$ <span class="flag">ping</span> -c 3 <span class="host">relay-7g.iss</span>
+PING relay-7g.iss (10.14.22.5): 56 data bytes
+64 bytes from 10.14.22.5: icmp_seq=0 ttl=62 time=12.3 ms
+64 bytes from 10.14.22.5: icmp_seq=1 ttl=62 time=11.9 ms
+64 bytes from 10.14.22.5: icmp_seq=2 ttl=62 time=12.1 ms
+<span class="dim">--- relay-7g.iss ping statistics ---</span>
+<span class="ok">3 packets transmitted, 3 received, 0.0% packet loss</span>
+round-trip min/avg/max = 11.9/12.1/12.3 ms
+
+<span class="prompt">cadet.odinsson@supertoad</span>:<span class="ok">~</span>$ <span class="flag">traceroute</span> <span class="host">relay-7g.iss</span>
+ 1  gw01.supertoad      (10.0.0.1)    0.412 ms
+ 2  hub.tethys-ring     (10.14.0.1)   4.021 ms
+ 3  <span class="err">* * *</span>            <span class="dim">(request timed out)</span>
+ 4  relay-7g.iss        (10.14.22.5) 12.104 ms
+
+<span class="prompt">cadet.odinsson@supertoad</span>:<span class="ok">~</span>$ <span class="flag">nmap</span> -Pn -p 22,80,443 <span class="host">10.14.22.5</span>
+Starting Nmap 7.95 at 2387-04-18 02:14 SUPERTOAD
+Nmap scan report for 10.14.22.5
+PORT     STATE   SERVICE
+22/tcp   <span class="ok">open</span>    ssh
+80/tcp   <span class="dim">closed</span>  http
+443/tcp  <span class="ok">open</span>    https
+</div>
+          <div class="bigterm__input">
+            <span class="ps1">cadet.odinsson@supertoad:~$</span>
+            <span class="typed">ssh relay-7g.iss</span>
+            <span class="caret"></span>
+          </div>
+          <div class="bigterm__foot">
+            <span>^C <b>cancel</b></span>
+            <span>TAB <b>complete</b></span>
+            <span>↑↓ <b>history</b></span>
+            <span>F1 <b>help</b></span>
+            <span>F4 <b>objectives</b></span>
+            <span style="margin-left:auto">SHELL · BASH 5.2 · ZSH compat</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Schematic / starfield -->
+      <div class="panel panel--flex">
+        <div class="panel__header"><span>nav.schematic · sector 7G</span><span class="dots" id="coords">X:0042.19 · Y:−018.55 · Z:0007.00</span></div>
+        <div class="schematic" id="schem">
+          <div class="starfield" id="stars"></div>
+          <div class="crosshair"></div>
+
+          <!-- Shuttle schematic (V miniseries-style — wireframe, original) -->
+          <svg viewBox="0 0 800 260" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <filter id="g"><feGaussianBlur stdDeviation="0.8"/></filter>
+              <pattern id="stripe" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                <line x1="0" y1="0" x2="0" y2="6" stroke="currentColor" stroke-width="0.6" opacity="0.35"/>
+              </pattern>
+            </defs>
+
+            <g stroke="currentColor" fill="none" stroke-width="1.2" style="color: var(--fg-1); filter:url(#g); opacity:0.95">
+              <!-- Main disc body (top view of flat shuttle) -->
+              <ellipse cx="400" cy="130" rx="240" ry="46"/>
+              <ellipse cx="400" cy="130" rx="180" ry="34"/>
+              <ellipse cx="400" cy="130" rx="90"  ry="18"/>
+
+              <!-- Central dome / cockpit -->
+              <circle cx="400" cy="130" r="14"/>
+              <circle cx="400" cy="130" r="6" fill="currentColor"/>
+
+              <!-- Forward bridge -->
+              <path d="M 400 84 L 420 74 L 380 74 Z"/>
+              <line x1="400" y1="84" x2="400" y2="74"/>
+
+              <!-- Wing pods L/R -->
+              <path d="M 160 130 L 110 112 L 70 118 L 60 128 L 70 138 L 110 146 Z"/>
+              <path d="M 640 130 L 690 112 L 730 118 L 740 128 L 730 138 L 690 146 Z"/>
+
+              <!-- Engine glow markers -->
+              <circle cx="70"  cy="128" r="3" fill="currentColor"/>
+              <circle cx="730" cy="128" r="3" fill="currentColor"/>
+
+              <!-- Surface greebling -->
+              <line x1="250" y1="130" x2="550" y2="130"/>
+              <line x1="280" y1="116" x2="520" y2="116"/>
+              <line x1="280" y1="144" x2="520" y2="144"/>
+              <line x1="340" y1="105" x2="460" y2="105"/>
+              <line x1="340" y1="155" x2="460" y2="155"/>
+
+              <!-- Radial ribs -->
+              <line x1="220" y1="130" x2="400" y2="130" opacity="0.4"/>
+              <line x1="580" y1="130" x2="400" y2="130" opacity="0.4"/>
+              <line x1="400" y1="95"  x2="400" y2="165" opacity="0.4"/>
+
+              <!-- Belly stripe pattern -->
+              <ellipse cx="400" cy="130" rx="180" ry="34" fill="url(#stripe)" stroke="none" opacity="0.25"/>
+            </g>
+
+            <!-- Measurement ticks -->
+            <g stroke="currentColor" style="color: var(--fg-3); opacity:0.6" stroke-width="0.8">
+              <line x1="60" y1="196" x2="740" y2="196"/>
+              <g fill="currentColor" font-family="JetBrains Mono, monospace" font-size="9" style="color: var(--fg-3)">
+                <line x1="60" y1="196" x2="60" y2="204"/><text x="60" y="218" text-anchor="middle">-240</text>
+                <line x1="230" y1="196" x2="230" y2="204"/><text x="230" y="218" text-anchor="middle">-120</text>
+                <line x1="400" y1="196" x2="400" y2="204"/><text x="400" y="218" text-anchor="middle">000 M</text>
+                <line x1="570" y1="196" x2="570" y2="204"/><text x="570" y="218" text-anchor="middle">+120</text>
+                <line x1="740" y1="196" x2="740" y2="204"/><text x="740" y="218" text-anchor="middle">+240</text>
+              </g>
+            </g>
+          </svg>
+
+          <!-- callouts -->
+          <div class="sch-label" style="top:28%; left:6%">◇ ENG-L · 98%</div>
+          <div class="sch-label" style="top:28%; right:6%">◇ ENG-R · 97%</div>
+          <div class="sch-label" style="top:38%; left:48%">◉ CMD BRIDGE</div>
+          <div class="sch-label" style="top:66%; left:40%">▲ CRAFT · ISS SUPERTOAD</div>
+
+          <div class="hud-tl">
+            SECTOR <b>07-G</b><br>
+            HDG <b>271.4°</b><br>
+            VEL <b>0.00 C</b>
+          </div>
+          <div class="hud-tr">
+            CONTACTS <b>3</b><br>
+            HOSTILE <b>0</b><br>
+            SIGINT <b>LOCKED</b>
+          </div>
+          <div class="hud-bl">
+            SCAN <b>ACTIVE</b><br>
+            RANGE <b>12.4 KM</b>
+          </div>
+          <div class="hud-br">
+            ETA RELAY <b>04:22</b><br>
+            DRIFT <b>0.02 M/S</b>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: telemetry + readouts -->
+    <div class="col">
+      <div class="panel panel--flex">
+        <div class="panel__header"><span>telemetry.live</span><span class="dots">· · ·</span></div>
+        <div class="panel__body" style="padding:var(--sp-4); display:flex; flex-direction:column; gap:var(--sp-3)">
+          <div>
+            <div class="uppercase dim" style="font-size:var(--fs-xs); margin-bottom:4px">Local interface · eth0</div>
+            <div class="kv"><span class="kv__k">ipv4</span><span class="kv__v">10.0.0.42</span><span class="kv__u">/24</span></div>
+            <div class="kv"><span class="kv__k">mac</span><span class="kv__v">fc:aa:14:33:07:2b</span><span class="kv__u">hw</span></div>
+            <div class="kv"><span class="kv__k">mtu</span><span class="kv__v">1500</span><span class="kv__u">b</span></div>
+          </div>
+
+          <div>
+            <div class="uppercase dim" style="font-size:var(--fs-xs); margin-bottom:4px">Uplink · relay-7g</div>
+            <div class="kv"><span class="kv__k">rtt</span><span class="kv__v hot" id="rtt">12.1</span><span class="kv__u">ms</span></div>
+            <div class="kv"><span class="kv__k">loss</span><span class="kv__v warn">0.4</span><span class="kv__u">%</span></div>
+            <div class="kv"><span class="kv__k">hops</span><span class="kv__v">4</span><span class="kv__u">—</span></div>
+          </div>
+
+          <div>
+            <div class="row" style="justify-content:space-between">
+              <span class="uppercase dim" style="font-size:var(--fs-xs)">Signal</span>
+              <span class="mono" style="font-size:var(--fs-xs)" id="sig-v">82 / 100</span>
+            </div>
+            <div class="meter" style="margin-top:6px"><div class="meter__fill" id="sig-bar" style="width:82%"></div></div>
+          </div>
+          <div>
+            <div class="row" style="justify-content:space-between">
+              <span class="uppercase dim" style="font-size:var(--fs-xs)">Encryption</span>
+              <span class="mono" style="font-size:var(--fs-xs)">ED25519 · 256-bit</span>
+            </div>
+            <div class="meter" style="margin-top:6px"><div class="meter__fill" style="width:100%"></div></div>
+          </div>
+
+          <hr class="hr">
+
+          <div>
+            <div class="uppercase dim" style="font-size:var(--fs-xs); margin-bottom:6px">ARP cache · last 4</div>
+            <div style="font-size:var(--fs-xs); color: var(--fg-2); line-height:1.7">
+              <div><span class="dim">10.0.0.1  </span> fc:aa:14:00:00:01 <span class="dim">gw01</span></div>
+              <div><span class="dim">10.0.0.7  </span> fc:aa:14:00:00:07 <span class="dim">instructor</span></div>
+              <div><span class="dim">10.14.0.1 </span> fc:aa:14:0e:00:01 <span class="dim">hub</span></div>
+              <div><span class="dim">10.14.22.5</span> <span class="warn">?? · resolving</span></div>
+            </div>
+          </div>
+
+          <hr class="hr">
+
+          <div>
+            <div class="uppercase dim" style="font-size:var(--fs-xs); margin-bottom:6px">Command Ref · sector 7G</div>
+            <div style="font-size:var(--fs-xs); line-height:1.8">
+              <div><span class="hot">ping</span>    <span class="dim">— probe host reachability</span></div>
+              <div><span class="hot">traceroute</span> <span class="dim">— map hops to target</span></div>
+              <div><span class="hot">nmap</span>    <span class="dim">— enumerate services</span></div>
+              <div><span class="hot">ssh</span>     <span class="dim">— secure shell into node</span></div>
+              <div><span class="hot">ip a</span>    <span class="dim">— show local interfaces</span></div>
+              <div><span class="hot">arp</span>     <span class="dim">— layer-2 address cache</span></div>
+              <div><span class="hot">curl</span>    <span class="dim">— fetch resource over http</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ================= STATUS BAR ================= -->
+  <div class="statusbar">
+    <div class="left">
+      <span>SHELL <b>READY</b></span>
+      <span>USER <b id="sb-user">cadet.odinsson</b></span>
+      <span>TTY <b>/dev/tty0</b></span>
+      <span>CWD <b>~/missions/msn-014</b></span>
+    </div>
+    <div class="right">
+      <span>MEM <b>42%</b></span>
+      <span>LOAD <b>0.37 · 0.42 · 0.51</b></span>
+      <span>UTC <b id="sb-clock">00:00:00</b></span>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ================= TWEAKS PANEL ================= -->
+<aside class="tweaks" id="tweaks" role="dialog" aria-label="Tweaks">
+  <div class="tweaks__head">
+    <span>TWEAKS · COCKPIT</span>
+    <button id="tweaks-close" aria-label="Close">×</button>
+  </div>
+  <div class="tweaks__body">
+    <div class="tweaks__row">
+      <label>Palette</label>
+      <div class="tweaks__pals" id="tw-pal">
+        <button data-p="green" aria-pressed="true">GREEN</button>
+        <button data-p="amber" aria-pressed="false">AMBER</button>
+        <button data-p="blueprint" aria-pressed="false">BLUE</button>
+        <button data-p="cyberpunk" aria-pressed="false">CYBER</button>
+      </div>
+    </div>
+    <div class="tweaks__row">
+      <label>Ship name</label>
+      <input id="tw-ship" type="text" value="ISS SUPERTOAD">
+    </div>
+    <div class="tweaks__row">
+      <label>Callsign</label>
+      <input id="tw-callsign" type="text" value="ODINSSON">
+    </div>
+    <div class="tweaks__row">
+      <label>Initials badge</label>
+      <input id="tw-initials" type="text" value="O/04">
+    </div>
+    <div class="tweaks__row">
+      <label>Mission title</label>
+      <input id="tw-mtitle" type="text" value="RECON: RELAY STATION 7G">
+    </div>
+    <div class="tweaks__row">
+      <label>Mission brief</label>
+      <input id="tw-mbody" type="text" value="Uplink to relay station before communications window closes. Map exposed services and report the breach vector.">
+    </div>
+  </div>
+</aside>
+
+<script>
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "palette": "amber",
+  "shipName": "ISS SUPERTOAD",
+  "callsign": "ODINSSON",
+  "initials": "O\/04",
+  "missionTitle": "RECON: RELAY STATION 7G",
+  "missionBody": "Uplink to relay station before communications window closes. Map exposed services and report the breach vector."
+}/*EDITMODE-END*/;
+
+// ---- Apply state ----
+function apply(state) {
+  document.documentElement.dataset.palette = state.palette;
+  document.getElementById('tb-ship').textContent = state.shipName;
+  document.getElementById('callsign').textContent = state.callsign;
+  document.getElementById('av-initials').textContent = state.initials;
+  document.getElementById('mission-title').textContent = state.missionTitle;
+  document.getElementById('mission-body').textContent = state.missionBody;
+  // sync pal switch
+  document.querySelectorAll('#tw-pal button').forEach(b => {
+    b.setAttribute('aria-pressed', b.dataset.p === state.palette ? 'true' : 'false');
+  });
+  // sync inputs
+  const map = { 'tw-ship':'shipName', 'tw-callsign':'callsign', 'tw-initials':'initials', 'tw-mtitle':'missionTitle', 'tw-mbody':'missionBody' };
+  for (const id in map) { const el = document.getElementById(id); if (el && document.activeElement !== el) el.value = state[map[id]]; }
+}
+let state = { ...TWEAK_DEFAULTS };
+apply(state);
+
+function persist(edits) {
+  state = { ...state, ...edits };
+  apply(state);
+  window.parent.postMessage({ type: '__edit_mode_set_keys', edits }, '*');
+}
+
+// ---- Tweaks panel host protocol ----
+window.addEventListener('message', (e) => {
+  const d = e.data;
+  if (!d || !d.type) return;
+  if (d.type === '__activate_edit_mode')   document.getElementById('tweaks').dataset.open = 'true';
+  if (d.type === '__deactivate_edit_mode') document.getElementById('tweaks').dataset.open = 'false';
+});
+window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+
+document.getElementById('tweaks-close').onclick = () => {
+  document.getElementById('tweaks').dataset.open = 'false';
+};
+
+// Palette buttons
+document.getElementById('tw-pal').addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-p]'); if (!btn) return;
+  persist({ palette: btn.dataset.p });
+});
+
+// Text inputs
+const inputBindings = [
+  ['tw-ship', 'shipName'],
+  ['tw-callsign', 'callsign'],
+  ['tw-initials', 'initials'],
+  ['tw-mtitle', 'missionTitle'],
+  ['tw-mbody', 'missionBody'],
+];
+inputBindings.forEach(([id, key]) => {
+  document.getElementById(id).addEventListener('input', (e) => persist({ [key]: e.target.value }));
+});
+
+// ---- Scale-to-fit stage ----
+function fitStage() {
+  const stage = document.getElementById('stage');
+  if (!stage) return;
+  const sx = window.innerWidth  / 1600;
+  const sy = window.innerHeight / 900;
+  const s = Math.min(sx, sy);
+  stage.style.transform = `scale(${s})`;
+}
+fitStage();
+window.addEventListener('resize', fitStage);
+
+// ---- Stars ----
+(function stars() {
+  const el = document.getElementById('stars');
+  const n = 90;
+  let html = '';
+  for (let i=0; i<n; i++) {
+    const t = Math.random()*100, l = Math.random()*100;
+    const o = (0.3 + Math.random()*0.7).toFixed(2);
+    const d = (1 + Math.random()*3).toFixed(1);
+    html += `<span class="s" style="top:${t}%; left:${l}%; opacity:${o}; transform: scale(${d})"></span>`;
+  }
+  el.innerHTML = html;
+})();
+
+// ---- Clock + stardate + flicker readouts ----
+function pad(n, w=2) { return String(n).padStart(w, '0'); }
+function tick() {
+  const now = new Date();
+  const h = pad(now.getUTCHours()), m = pad(now.getUTCMinutes()), s = pad(now.getUTCSeconds());
+  document.getElementById('sb-clock').textContent = `${h}:${m}:${s}`;
+
+  const start = Date.UTC(now.getUTCFullYear(), 0, 0);
+  const dayOfYear = Math.floor((now - start) / 86400000);
+  const frac = ((now.getUTCHours()*3600 + now.getUTCMinutes()*60 + now.getUTCSeconds()) / 864).toFixed(0);
+  const sd = (50000 + (now.getUTCFullYear()-2020)*1000 + dayOfYear) + '.' + pad(frac, 2);
+  document.getElementById('tb-stardate').textContent = sd;
+
+  // jitter rtt + signal to feel alive
+  const rtt = (11.8 + Math.random()*0.7).toFixed(1);
+  document.getElementById('rtt').textContent = rtt;
+  const sig = 78 + Math.floor(Math.random()*9);
+  document.getElementById('sig-v').textContent = `${sig} / 100`;
+  document.getElementById('sig-bar').style.width = sig + '%';
+
+  // coords drift
+  const x = (42.19 + Math.sin(Date.now()/4000)*0.04).toFixed(2);
+  const y = (-18.55 + Math.cos(Date.now()/5200)*0.05).toFixed(2);
+  document.getElementById('coords').textContent = `X:00${x} · Y:-0${y.replace('-','')} · Z:0007.00`;
+}
+tick(); setInterval(tick, 1000);
+
+// Auto-scroll terminal body to bottom
+const tb = document.getElementById('term-body');
+tb.scrollTop = tb.scrollHeight;
+</script>
+</body>
+</html>
