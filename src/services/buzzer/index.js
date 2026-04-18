@@ -12,6 +12,13 @@ function createBuzzerService({ platformBuzzer, logger }) {
     }, ms);
   }
 
+  async function playNote(hz, ms) {
+    if (timeout) { clearTimeout(timeout); timeout = null; await platformBuzzer.stop(); }
+    await platformBuzzer.startTone(hz);
+    await new Promise(r => setTimeout(r, ms));
+    await platformBuzzer.stop();
+  }
+
   async function close() {
     if (timeout) {
       clearTimeout(timeout);
@@ -22,6 +29,7 @@ function createBuzzerService({ platformBuzzer, logger }) {
 
   return {
     beep,
+    playNote,
     close
   };
 }

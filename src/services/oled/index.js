@@ -131,27 +131,36 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
       await delay(PHASE_DELAY_MS);
     },
 
-    async bootComplete(pilotName, { onDot } = {}) {
+    async bootComplete({ shipName, pilotName, onDot } = {}) {
       if (!state.ready) return;
 
+      const dotY = Math.floor((height - 8) / 2);
       for (const dots of ['.', '..', '...']) {
-        render(normalizeLines([dots]));
+        oled.clearDisplay(true);
+        const dotX = Math.floor((width - dots.length * 6) / 2);
+        oled.setCursor(dotX, dotY);
+        oled.writeString(font, 1, dots, 1, true);
         if (onDot) await onDot();
         await delay(1000);
       }
 
-      const name = String(pilotName || 'no pilot').toUpperCase();
-      const ip   = getLocalIp() ?? 'lost in the void';
+      const ship  = String(shipName  || '').toUpperCase();
+      const pilot = String(pilotName || 'no pilot').toUpperCase();
+
+      // size-2 char: ~12px wide, ~14px tall; size-1: ~6px wide, ~8px tall
+      // total height ~14 + 4 + 8 = 26px; center vertically
+      const shipY  = Math.floor((height - 26) / 2);
+      const pilotY = shipY + 14 + 4;
 
       oled.clearDisplay(true);
 
-      const nameX = Math.max(0, Math.floor((width - name.length * 6) / 2));
-      oled.setCursor(nameX, 20);
-      oled.writeString(font, 1, name, 1, true);
+      const shipX  = Math.max(0, Math.floor((width - ship.length  * 12) / 2));
+      oled.setCursor(shipX, shipY);
+      oled.writeString(font, 2, ship, 1, true);
 
-      const ipX = Math.max(0, Math.floor((width - ip.length * 6) / 2));
-      oled.setCursor(ipX, 40);
-      oled.writeString(font, 1, ip, 1, true);
+      const pilotX = Math.max(0, Math.floor((width - pilot.length * 6)  / 2));
+      oled.setCursor(pilotX, pilotY);
+      oled.writeString(font, 1, pilot, 1, true);
     },
 
     module(name, status) {

@@ -4,7 +4,7 @@ const router = require('express').Router();
 
 const COCKPIT_DIR  = path.join(__dirname, '../../../cockpit');
 const PILOT_JSON   = path.join(COCKPIT_DIR, 'pilot.json');
-const PILOT_FALLBACK = { pilotName: 'no pilot', pilot_image: '' };
+const PILOT_FALLBACK = { shipName: '', pilotName: 'no pilot', pilot_image: '' };
 
 function loadPilot() {
   try {
@@ -15,6 +15,7 @@ function loadPilot() {
 }
 
 function isPilotConfigured(pilot) {
+  if (!(pilot.shipName || '').trim()) return false;
   const name = (pilot.pilotName || '').trim().toLowerCase();
   if (!name || name === 'no pilot') return false;
   if (!pilot.pilot_image) return false;
