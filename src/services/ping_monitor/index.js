@@ -24,6 +24,10 @@ function createPingMonitor({ onPing, logger }) {
       proc = null;
     });
 
+    proc.stderr.on('data', (data) => {
+      logger?.warn?.(`[PING_MONITOR] tcpdump stderr: ${data.toString().trim()}`);
+    });
+
     proc.stdout.on('data', (data) => {
       const lines = data.toString().split('\n');
       for (const line of lines) {
