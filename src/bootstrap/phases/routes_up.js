@@ -41,16 +41,7 @@ async function routesUp(context) {
 
   const { shipName, pilotName } = loadPilot();
 
-  await context.oledService?.bootComplete({
-    shipName,
-    pilotName,
-    onDot: async () => {
-      context.ledService?.allOn();
-      context.buzzerService?.beep();
-      await new Promise(r => setTimeout(r, 100));
-      context.ledService?.allOff();
-    },
-  });
+  await context.oledService?.bootComplete({ shipName, pilotName });
 
   await Promise.all([
     context.ledService?.sequence(),
