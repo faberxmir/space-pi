@@ -26,6 +26,14 @@ What this guide covers:
 ## 3. Required system packages
 List exact apt packages we need and why.
 
+| Package | Why |
+|---|---|
+| `tcpdump` | Ping detection — the app spawns tcpdump to monitor incoming ICMP echo requests |
+
+```bash
+sudo apt install tcpdump
+```
+
 ## 4. Interfaces & kernel modules
 ### I2C
 ## I²C clock speed (100 kHz vs 400 kHz) – OLED performance note
