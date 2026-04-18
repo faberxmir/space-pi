@@ -131,11 +131,12 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
       await delay(PHASE_DELAY_MS);
     },
 
-    async bootComplete(pilotName) {
+    async bootComplete(pilotName, { onDot } = {}) {
       if (!state.ready) return;
 
       for (const dots of ['.', '..', '...']) {
         render(normalizeLines([dots]));
+        if (onDot) await onDot();
         await delay(1000);
       }
 

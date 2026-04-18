@@ -23,7 +23,14 @@ async function routesUp(context) {
 
   context.lifecycle.register("httpServer", context.httpServer.stop);
 
-  await context.oledService?.bootComplete(loadPilotName());
+  await context.oledService?.bootComplete(loadPilotName(), {
+    onDot: async () => {
+      context.ledService?.allOn();
+      context.buzzerService?.beep();
+      await new Promise(r => setTimeout(r, 100));
+      context.ledService?.allOff();
+    },
+  });
 }
 
 module.exports = { routesUp };
