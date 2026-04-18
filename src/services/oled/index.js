@@ -146,11 +146,13 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
 
       const ship  = String(shipName  || '').toUpperCase();
       const pilot = String(pilotName || 'no pilot').toUpperCase();
+      const ip    = getLocalIp() ?? 'lost in the void';
 
-      // size-2 char: ~12px wide, ~14px tall; size-1: ~6px wide, ~8px tall
-      // total height ~14 + 4 + 8 = 26px; center vertically
-      const shipY  = Math.floor((height - 26) / 2);
-      const pilotY = shipY + 14 + 4;
+      // size-2 ship: ~14px tall; size-1 pilot+ip: 8px each; gaps 3px
+      // total ~14 + 3 + 8 + 3 + 8 = 36px; center vertically
+      const shipY  = Math.floor((height - 36) / 2);
+      const pilotY = shipY + 14 + 3;
+      const ipY    = pilotY + 8 + 3;
 
       oled.clearDisplay(true);
 
@@ -158,9 +160,13 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
       oled.setCursor(shipX, shipY);
       oled.writeString(font, 2, ship, 1, true);
 
-      const pilotX = Math.max(0, Math.floor((width - pilot.length * 6)  / 2));
+      const pilotX = Math.max(0, Math.floor((width - pilot.length * 6) / 2));
       oled.setCursor(pilotX, pilotY);
       oled.writeString(font, 1, pilot, 1, true);
+
+      const ipX = Math.max(0, Math.floor((width - ip.length * 6) / 2));
+      oled.setCursor(ipX, ipY);
+      oled.writeString(font, 1, ip, 1, true);
     },
 
     module(name, status) {

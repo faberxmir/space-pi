@@ -18,13 +18,8 @@ function isPilotConfigured(pilot) {
   if (!(pilot.shipName || '').trim()) return false;
   const name = (pilot.pilotName || '').trim().toLowerCase();
   if (!name || name === 'no pilot') return false;
-  if (!pilot.pilot_image) return false;
-  try {
-    fs.accessSync(path.join(COCKPIT_DIR, pilot.pilot_image));
-    return true;
-  } catch (_) {
-    return false;
-  }
+  if (!(pilot.pilot_image || '').trim()) return false;
+  return true;
 }
 
 function createPageRoutes() {
