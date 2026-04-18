@@ -11,6 +11,7 @@ const delay = ms => new Promise(r => setTimeout(r, ms));
 function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, height = 64, logger = console } = {}) {
   let i2cBus = null;
   let oled = null;
+  let pingTimer = null;
 
   const state = {
     ready: false,
@@ -131,7 +132,7 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
       await delay(PHASE_DELAY_MS);
     },
 
-    async bootComplete({ shipName, pilotName, configured = false } = {}) {
+    async bootComplete({ shipName, pilotName, configured = false, skipAnimation = false } = {}) {
       if (!state.ready) return;
 
       if (!configured) {
@@ -149,6 +150,23 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
 
       const ship  = String(shipName  || '').toUpperCase();
       const pilot = String(pilotName || '').toUpperCase();
+
+      if (skipAnimation) {
+        const shipY  = Math.floor((height - 34) / 2);
+        const line1Y = shipY + 14 + 4;
+        const line2Y = line1Y + 3;
+        const finalPilotY = line2Y + 1 + 4;
+        oled.clearDisplay(true);
+        const shipX = Math.max(0, Math.floor((width - ship.length * 12) / 2));
+        oled.setCursor(shipX, shipY);
+        oled.writeString(font, 2, ship, 1, true);
+        oled.drawLine(6, line1Y, width - 6, line1Y, 1, true);
+        oled.drawLine(6, line2Y, width - 6, line2Y, 1, true);
+        const pilotX = Math.max(0, Math.floor((width - pilot.length * 6) / 2));
+        oled.setCursor(pilotX, finalPilotY);
+        oled.writeString(font, 1, pilot, 1, true);
+        return;
+      }
 
       // ── 1. "ship name:" slides from center to top (2 s, 20 frames) ──
       const LABEL      = 'ship name:';
@@ -222,6 +240,47 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
       const pilotX = Math.max(0, Math.floor((width - pilot.length * 6) / 2));
       oled.setCursor(pilotX, finalPilotY);
       oled.writeString(font, 1, pilot, 1, true);
+    },
+
+    showPing(ip) {
+      if (!state.ready) return;
+
+      const msg   = 'INCOMING PING';
+      const msgX  = Math.floor((width - msg.length * 6) / 2);
+      const ipStr = String(ip);
+      const ipX   = Math.floor((width - ipStr.length * 6) / 2);
+      const totalH = 8 + 4 + 8;
+      const msgY  = Math.floor((height - totalH) / 2);
+      const ipY   = msgY + 12;
+
+      oled.clearDisplay(true);
+      oled.setCursor(Math.max(0, msgX), msgY);
+      oled.writeString(font, 1, msg, 1, true);
+      oled.setCursor(Math.max(0, ipX), ipY);
+      oled.writeString(font, 1, ipStr, 1, true);
+
+      if (pingTimer) clearTimeout(pingTimer);
+
+      pingTimer = setTimeout(async () => {
+        pingTimer = null;
+        if (!state.ready) return;
+        try {
+          const fs   = require('fs');
+          const path = require('path');
+          const PILOT_JSON  = path.join(__dirname, '../../../cockpit/pilot.json');
+          const COCKPIT_DIR = path.dirname(PILOT_JSON);
+          let pilot = {};
+          try { pilot = JSON.parse(fs.readFileSync(PILOT_JSON, 'utf8')); } catch (_) {}
+          const sn = (pilot.shipName    || '').trim();
+          const pn = (pilot.pilotName   || '').trim();
+          const pi = (pilot.pilot_image || '').trim();
+          let configured = !!(sn && pn && pn.toLowerCase() !== 'no pilot' && pi);
+          if (configured) {
+            try { fs.accessSync(path.join(COCKPIT_DIR, pi)); } catch (_) { configured = false; }
+          }
+          await this.bootComplete({ shipName: sn, pilotName: pn, configured, skipAnimation: true });
+        } catch (_) {}
+      }, 5000);
     },
 
     module(name, status) {

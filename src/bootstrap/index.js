@@ -7,6 +7,7 @@ const { createLifecycle } = require("./lifecycle");
 const { routesUp } = require("./phases/routes_up");
 const { terminalUp } = require("./phases/terminal_up");
 const { cockpitUp } = require("./phases/cockpit_up");
+const { ping_up }   = require("./phases/ping_up");
 
 // ... other phase imports ...
 
@@ -24,6 +25,7 @@ async function bootstrap(context) {
   await terminalUp(context);
   await routesUp(context);
   await cockpitUp(context);
+  await ping_up(context);
 
   // await runtime(context);
 
