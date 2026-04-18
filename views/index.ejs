@@ -1,8 +1,14 @@
-<%-include('partials/head')%>
-<section id="welcome" class="std-width">
+<%- include('partials/head') %>
+<section class="std-width">
     <h1>Welcome to the bridge!</h1>
-    <p>This is where you pilot your ship!</p>
+    <p>
+        2ITA wargames is the end goal of this project. The idea is to make this
+        into some kind of interactive game for students where they can "fight"
+        each other by logging on to the pi terminal. The idea is to connect all
+        of these to a LAN and then use network commands to discover each other
+        and get points by doing actions to each other. The idea isn't fully
+        sketched out yet — experimenting to see what we can do.
+    </p>
+    <p><a href="/api-docs">API documentation →</a></p>
 </section>
-<%-include('partials/led-controls')%>
-<%-include('partials/oled-input')%>
-<%-include('partials/foot')%>
+<%- include('partials/foot') %>

@@ -1,0 +1,63 @@
+<%- include('partials/head') %>
+<section class="std-width">
+    <h1>API Documentation</h1>
+    <p><a href="/">← Back to bridge</a></p>
+
+    <h2>Buzzer</h2>
+    <table>
+        <tr>
+            <th>Method</th>
+            <th>Path</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>GET</td>
+            <td><code>/buzzer</code></td>
+            <td>Trigger a short beep (150ms @ 2000Hz).</td>
+        </tr>
+    </table>
+
+    <h2>LEDs</h2>
+    <table>
+        <tr>
+            <th>Method</th>
+            <th>Path</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>GET</td>
+            <td><code>/led/on</code></td>
+            <td>Turn all LEDs on.</td>
+        </tr>
+        <tr>
+            <td>GET</td>
+            <td><code>/led/off</code></td>
+            <td>Turn all LEDs off.</td>
+        </tr>
+        <tr>
+            <td>GET</td>
+            <td><code>/led/sequence</code></td>
+            <td>
+                Run the sliding LED animation. A two-LED window sweeps forward
+                through all 9 active LEDs then back, 100ms per step (~1.8s total).
+                Returns immediately — animation runs in the background.
+                Concurrent calls are ignored until the current sequence finishes.
+            </td>
+        </tr>
+    </table>
+
+    <h2>OLED Display</h2>
+    <table>
+        <tr>
+            <th>Method</th>
+            <th>Path</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>GET</td>
+            <td><code>/oled/setText/:text</code></td>
+            <td>Display <code>:text</code> centered on the 128×64 OLED screen.</td>
+        </tr>
+    </table>
+</section>
+<%- include('partials/foot') %>
