@@ -6,6 +6,7 @@ const { createPinManager } = require("../platform/gpio");
 const { createLifecycle } = require("./lifecycle");
 const { routesUp } = require("./phases/routes_up");
 const { terminalUp } = require("./phases/terminal_up");
+const { cockpitUp } = require("./phases/cockpit_up");
 
 // ... other phase imports ...
 
@@ -22,7 +23,8 @@ async function bootstrap(context) {
   await peripheralsUp(context);
   await terminalUp(context);
   await routesUp(context);
-  
+  await cockpitUp(context);
+
   // await runtime(context);
 
   return context;
