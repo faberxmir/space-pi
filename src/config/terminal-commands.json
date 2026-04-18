@@ -1,0 +1,8 @@
+{
+  "ping":       { "bin": "ping",       "description": "Probe host reachability", "allowArgs": true  },
+  "arp":        { "bin": "arp",        "description": "Show ARP cache",          "allowArgs": false },
+  "ip":         { "bin": "ip",         "description": "Show network interfaces", "allowArgs": true  },
+  "traceroute": { "bin": "traceroute", "description": "Trace route to host",     "allowArgs": true  },
+  "nmap":       { "bin": "nmap",       "description": "Network port scanner",    "allowArgs": true  },
+  "curl":       { "bin": "curl",       "description": "Fetch resource over HTTP","allowArgs": true  }
+}

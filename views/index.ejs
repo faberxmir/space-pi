@@ -38,14 +38,18 @@
         </div>
         <div class="pilot">
           <div class="avatar">
-            <div class="reticle">
-              <div class="placeholder">?</div>
-            </div>
-            <div class="scan"></div>
-            <div class="caption">[ no photo on file ]</div>
+            <% if (pilot.pilotImageUrl) { %>
+              <img src="<%= pilot.pilotImageUrl %>" class="avatar-img" alt="pilot">
+            <% } else { %>
+              <div class="reticle">
+                <div class="placeholder">?</div>
+              </div>
+              <div class="scan"></div>
+              <div class="caption">[ no photo on file ]</div>
+            <% } %>
           </div>
           <div>
-            <div class="callsign">CALLSIGN</div>
+            <div class="callsign"><%= pilot.pilotName %></div>
             <div class="callsign-sub">Pilot · Unassigned</div>
           </div>
           <div class="kv"><span class="kv__k">Rank</span><span class="kv__v dim">—</span><span class="kv__u">—</span></div>
@@ -55,10 +59,18 @@
       </div>
     </div>
 
-    <!-- CENTER: Placeholder -->
+    <!-- CENTER: Terminal -->
     <div class="center-col">
-      <div class="panel placeholder-panel">
-        <div class="awaiting">// awaiting uplink</div>
+      <div class="cockpit-terminal panel">
+        <div class="panel__header">
+          <span>terminal.shell</span>
+          <span class="dots">· · ·</span>
+        </div>
+        <div class="term-output" id="term-output"></div>
+        <div class="term-input-row">
+          <span class="term-prompt">$</span>
+          <input id="term-input" type="text" autocomplete="off" spellcheck="false" placeholder="type a command...">
+        </div>
       </div>
     </div>
 
@@ -68,7 +80,7 @@
   <div class="statusbar">
     <div class="statusbar-left">
       <span>SHELL <b>READY</b></span>
-      <span>USER <b>—</b></span>
+      <span>USER <b><%= pilot.pilotName %></b></span>
       <span>TTY <b>/dev/tty0</b></span>
     </div>
     <div class="statusbar-right">
@@ -93,4 +105,5 @@
   }
   tick(); setInterval(tick, 1000);
 </script>
+<script src="/js/terminal.js" defer></script>
 <%- include('partials/foot') %>
