@@ -51,4 +51,10 @@ See `docs/pi-deploy.md` for the full deployment checklist.
 ## code standards
 - avoid magic numbers. Use config/.env when needed
 - always use plan mode before changing code.
-- never do work on the main branch.
+- work on the main branch.
+- css is always kept in a file of its own. 
+   - CSS common to all files are kept in main.css
+   - css for [pagename].html are kept in [pagename].css
+
+## web server
+- each time we add routes for the API, also update the webpage documenting the routes.
