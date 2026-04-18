@@ -32,7 +32,10 @@ List exact apt packages we need and why.
 
 ```bash
 sudo apt install tcpdump
+sudo setcap cap_net_raw+eip $(which tcpdump)
 ```
+
+> `setcap` is persistent across reboots — run once after install.
 
 ## 4. Interfaces & kernel modules
 ### I2C
