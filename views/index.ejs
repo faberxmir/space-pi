@@ -38,8 +38,8 @@
         </div>
         <div class="pilot">
           <div class="avatar">
-            <% if (pilot.pilotImageUrl) { %>
-              <img src="<%= pilot.pilotImageUrl %>" class="avatar-img" alt="pilot">
+            <% if (pilotConfigured) { %>
+              <img src="/cockpit/<%= pilot.pilot_image %>" class="avatar-img" alt="pilot">
             <% } else { %>
               <div class="reticle">
                 <div class="placeholder">?</div>
@@ -59,8 +59,9 @@
       </div>
     </div>
 
-    <!-- CENTER: Terminal -->
+    <!-- CENTER: Terminal or no-pilot gate -->
     <div class="center-col">
+      <% if (pilotConfigured) { %>
       <div class="cockpit-terminal panel">
         <div class="panel__header">
           <span>terminal.shell</span>
@@ -72,6 +73,11 @@
           <input id="term-input" type="text" autocomplete="off" spellcheck="false" placeholder="type a command...">
         </div>
       </div>
+      <% } else { %>
+      <div class="no-pilot panel">
+        <div class="no-pilot__msg">no pilot has entered to run this ship</div>
+      </div>
+      <% } %>
     </div>
 
   </div>
@@ -105,5 +111,5 @@
   }
   tick(); setInterval(tick, 1000);
 </script>
-<script src="/js/terminal.js" defer></script>
+<% if (pilotConfigured) { %><script src="/js/terminal.js" defer></script><% } %>
 <%- include('partials/foot') %>

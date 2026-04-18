@@ -2,21 +2,40 @@ const fs = require('fs');
 const path = require('path');
 const router = require('express').Router();
 
-const PILOT_PATH = path.join(__dirname, '../../../profile/pilot.json');
-const PILOT_FALLBACK = { pilotName: 'CALLSIGN', pilotImageUrl: '' };
+const COCKPIT_DIR  = path.join(__dirname, '../../../cockpit');
+const PILOT_JSON   = path.join(COCKPIT_DIR, 'pilot.json');
+const PILOT_FALLBACK = { pilotName: 'no pilot', pilot_image: '' };
 
 function loadPilot() {
   try {
-    return JSON.parse(fs.readFileSync(PILOT_PATH, 'utf8'));
+    return JSON.parse(fs.readFileSync(PILOT_JSON, 'utf8'));
   } catch (_) {
-    return PILOT_FALLBACK;
+    return { ...PILOT_FALLBACK };
+  }
+}
+
+function isPilotConfigured(pilot) {
+  const name = (pilot.pilotName || '').trim().toLowerCase();
+  if (!name || name === 'no pilot') return false;
+  if (!pilot.pilot_image) return false;
+  try {
+    fs.accessSync(path.join(COCKPIT_DIR, pilot.pilot_image));
+    return true;
+  } catch (_) {
+    return false;
   }
 }
 
 function createPageRoutes() {
-    router.get('/', (req, res) => res.render('index', { page: 'index', pilot: loadPilot() }));
-    router.get('/api-docs', (req, res) => res.render('api-docs', { page: 'api-docs', pilot: loadPilot() }));
-    return router;
+  router.get('/', (req, res) => {
+    const pilot = loadPilot();
+    res.render('index', { page: 'index', pilot, pilotConfigured: isPilotConfigured(pilot) });
+  });
+  router.get('/api-docs', (req, res) => {
+    const pilot = loadPilot();
+    res.render('api-docs', { page: 'api-docs', pilot, pilotConfigured: isPilotConfigured(pilot) });
+  });
+  return router;
 }
 
 module.exports = { createPageRoutes };
