@@ -42,7 +42,7 @@ async function peripheralsUp(context) {
       await context.buzzerService.close();
     });
 
-    context.oledService?.phase("PERIPHERALS_UP");
+    await context.oledService?.phase("PERIPHERALS_UP");
 
   return context;
 }

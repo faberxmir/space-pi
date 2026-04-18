@@ -31,7 +31,7 @@ async function displayUp(context) {
       context.logger?.info?.("Shutting down OLED service...");
       return context.oledService.close();
     });
-    context.oledService.phase("DISPLAY_UP");
+    await context.oledService.phase("DISPLAY_UP");
   } else throw new Error("OLED initialization failed");
 
   return context;

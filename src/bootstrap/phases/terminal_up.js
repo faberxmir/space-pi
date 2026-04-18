@@ -4,7 +4,7 @@ const commands = require('../../config/terminal-commands.json');
 async function terminalUp(context) {
   context.terminalService = createTerminalService({ commands, logger: context.logger });
   context.logger?.info?.('[TERMINAL_UP] terminal service ready');
-  context.oledService?.phase('TERMINAL_UP');
+  await context.oledService?.phase('TERMINAL_UP');
   return context;
 }
 
