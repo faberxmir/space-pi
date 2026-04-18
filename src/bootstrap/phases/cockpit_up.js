@@ -1,7 +1,8 @@
 const fs   = require('fs');
 const path = require('path');
 
-const PILOT_JSON = path.join(__dirname, '../../../cockpit/pilot.json');
+const PILOT_JSON  = path.join(__dirname, '../../../cockpit/pilot.json');
+const COCKPIT_DIR = path.dirname(PILOT_JSON);
 
 const FANFARE = [
   [523,  120],  // C5
@@ -33,6 +34,11 @@ function isPilotConfigured(p) {
   if (!p.shipName) return false;
   if (!p.pilotName || p.pilotName.toLowerCase() === 'no pilot') return false;
   if (!p.pilot_image) return false;
+  try {
+    fs.accessSync(path.join(COCKPIT_DIR, p.pilot_image));
+  } catch (_) {
+    return false;
+  }
   return true;
 }
 
