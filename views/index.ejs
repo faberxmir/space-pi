@@ -8,6 +8,10 @@
       <div class="sub">// cockpit</div>
     </div>
     <div class="topbar-slots">
+      <div class="topbar-slot topbar-slot--ship">
+        <div class="k">Vessel</div>
+        <div class="v ship-name glow"><%= pilot.shipName || '—' %></div>
+      </div>
       <div class="topbar-slot">
         <div class="k">Stardate</div>
         <div class="v" id="tb-stardate">—</div>
@@ -110,6 +114,9 @@
       (50000 + (now.getUTCFullYear()-2020)*1000 + day) + '.' + pad(frac);
   }
   tick(); setInterval(tick, 1000);
+<% if (!pilotConfigured) { %>
+  setTimeout(() => location.reload(), 15000);
+<% } %>
 </script>
 <% if (pilotConfigured) { %><script src="/js/terminal.js" defer></script><% } %>
 <%- include('partials/foot') %>
