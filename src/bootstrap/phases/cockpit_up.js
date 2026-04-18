@@ -9,6 +9,11 @@ const FANFARE = [
   [784,  120],  // G5
   [1047, 500],  // C6 — held
 ];
+const NEGATIVE_FANFARE = [
+  [784, 150],  // G5 — high
+  [440, 150],  // A4 — lower
+  [220, 300],  // A3 — lowest, held
+];
 const NOTE_GAP_MS = 20;
 
 function loadPilot() {
@@ -35,6 +40,22 @@ async function playFanfare(buzzerService) {
   for (const [hz, ms] of FANFARE) {
     await buzzerService.playNote(hz, ms);
     await new Promise(r => setTimeout(r, NOTE_GAP_MS));
+  }
+}
+
+async function playNegativeFanfare(buzzerService) {
+  for (const [hz, ms] of NEGATIVE_FANFARE) {
+    await buzzerService.playNote(hz, ms);
+    await new Promise(r => setTimeout(r, NOTE_GAP_MS));
+  }
+}
+
+async function negativeFlash(ledService) {
+  for (let i = 0; i < 3; i++) {
+    ledService?.allOn();
+    await new Promise(r => setTimeout(r, 100));
+    ledService?.allOff();
+    await new Promise(r => setTimeout(r, 100));
   }
 }
 
@@ -71,6 +92,10 @@ async function cockpitUp(context) {
       } else {
         context.logger?.info?.('[COCKPIT] pilot departed — showing NO PILOT screen');
         await context.oledService?.bootComplete({ configured: false });
+        await Promise.all([
+          negativeFlash(context.ledService),
+          context.buzzerService ? playNegativeFanfare(context.buzzerService) : Promise.resolve(),
+        ]);
       }
     } finally {
       busy = false;

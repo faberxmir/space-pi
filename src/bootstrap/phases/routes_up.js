@@ -12,6 +12,11 @@ const FANFARE = [
   [784,  120],  // G5
   [1047, 500],  // C6 — held
 ];
+const NEGATIVE_FANFARE = [
+  [784, 150],  // G5 — high
+  [440, 150],  // A4 — lower
+  [220, 300],  // A3 — lowest, held
+];
 const NOTE_GAP_MS = 20;
 
 function loadPilot() {
@@ -41,6 +46,22 @@ async function playFanfare(buzzerService) {
   }
 }
 
+async function playNegativeFanfare(buzzerService) {
+  for (const [hz, ms] of NEGATIVE_FANFARE) {
+    await buzzerService.playNote(hz, ms);
+    await new Promise(r => setTimeout(r, NOTE_GAP_MS));
+  }
+}
+
+async function negativeFlash(ledService) {
+  for (let i = 0; i < 3; i++) {
+    ledService?.allOn();
+    await new Promise(r => setTimeout(r, 100));
+    ledService?.allOff();
+    await new Promise(r => setTimeout(r, 100));
+  }
+}
+
 async function routesUp(context) {
   const app = createApp(context);
   context.httpServer = createHttpServer(app, context.logger);
@@ -52,16 +73,25 @@ async function routesUp(context) {
 
   const pilot = loadPilot();
 
+  const configured = isPilotConfigured(pilot);
+
   await context.oledService?.bootComplete({
     shipName:   pilot.shipName,
     pilotName:  pilot.pilotName,
-    configured: isPilotConfigured(pilot),
+    configured,
   });
 
-  await Promise.all([
-    context.ledService?.sequence(),
-    context.buzzerService ? playFanfare(context.buzzerService) : Promise.resolve(),
-  ]);
+  if (configured) {
+    await Promise.all([
+      context.ledService?.sequence(),
+      context.buzzerService ? playFanfare(context.buzzerService) : Promise.resolve(),
+    ]);
+  } else {
+    await Promise.all([
+      negativeFlash(context.ledService),
+      context.buzzerService ? playNegativeFanfare(context.buzzerService) : Promise.resolve(),
+    ]);
+  }
 }
 
 module.exports = { routesUp };
