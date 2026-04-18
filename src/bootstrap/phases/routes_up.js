@@ -17,10 +17,21 @@ const NOTE_GAP_MS = 20;
 function loadPilot() {
   try {
     const p = JSON.parse(fs.readFileSync(PILOT_JSON, 'utf8'));
-    return { shipName: p.shipName || '', pilotName: p.pilotName || 'no pilot' };
+    return {
+      shipName:    (p.shipName    || '').trim(),
+      pilotName:   (p.pilotName   || '').trim(),
+      pilot_image: (p.pilot_image || '').trim(),
+    };
   } catch (_) {
-    return { shipName: '', pilotName: 'no pilot' };
+    return { shipName: '', pilotName: '', pilot_image: '' };
   }
+}
+
+function isPilotConfigured(p) {
+  if (!p.shipName) return false;
+  if (!p.pilotName || p.pilotName.toLowerCase() === 'no pilot') return false;
+  if (!p.pilot_image) return false;
+  return true;
 }
 
 async function playFanfare(buzzerService) {
@@ -39,9 +50,13 @@ async function routesUp(context) {
 
   context.lifecycle.register("httpServer", context.httpServer.stop);
 
-  const { shipName, pilotName } = loadPilot();
+  const pilot = loadPilot();
 
-  await context.oledService?.bootComplete({ shipName, pilotName });
+  await context.oledService?.bootComplete({
+    shipName:   pilot.shipName,
+    pilotName:  pilot.pilotName,
+    configured: isPilotConfigured(pilot),
+  });
 
   await Promise.all([
     context.ledService?.sequence(),

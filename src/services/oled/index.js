@@ -1,6 +1,7 @@
 // Wrapper for the oled service
 
 const i2c = require("i2c-bus");
+const os   = require("os");
 const Oled = require("oled-i2c-bus");
 const font = require("oled-font-5x7");
 
@@ -46,6 +47,16 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
     });
 
     state.last.lines = lines;
+  }
+
+  function getLocalIp() {
+    const nets = os.networkInterfaces();
+    for (const name of Object.keys(nets)) {
+      for (const net of nets[name]) {
+        if (net.family === 'IPv4' && !net.internal) return net.address;
+      }
+    }
+    return null;
   }
 
   return {
@@ -120,11 +131,24 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
       await delay(PHASE_DELAY_MS);
     },
 
-    async bootComplete({ shipName, pilotName } = {}) {
+    async bootComplete({ shipName, pilotName, configured = false } = {}) {
       if (!state.ready) return;
 
+      if (!configured) {
+        const ip     = getLocalIp() ?? 'lost in the void';
+        const totalH = 8 + 4 + 8;
+        const noY    = Math.floor((height - totalH) / 2);
+        const ipY    = noY + 12;
+        oled.clearDisplay(true);
+        oled.setCursor(Math.floor((width - 'NO PILOT'.length * 6) / 2), noY);
+        oled.writeString(font, 1, 'NO PILOT', 1, true);
+        oled.setCursor(Math.floor((width - ip.length * 6) / 2), ipY);
+        oled.writeString(font, 1, ip, 1, true);
+        return;
+      }
+
       const ship  = String(shipName  || '').toUpperCase();
-      const pilot = String(pilotName || 'no pilot').toUpperCase();
+      const pilot = String(pilotName || '').toUpperCase();
 
       // ── 1. "ship name:" slides from center to top (2 s, 20 frames) ──
       const LABEL      = 'ship name:';
