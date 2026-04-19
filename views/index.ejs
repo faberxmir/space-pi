@@ -4,14 +4,10 @@
   <!-- TOP BAR -->
   <div class="topbar">
     <div class="brand">
-      <div class="mark glow">ISS SUPERTOAD</div>
+      <div class="mark glow">SS <%= (pilot.shipName || 'UNKNOWN').toUpperCase() %></div>
       <div class="sub">// cockpit</div>
     </div>
     <div class="topbar-slots">
-      <div class="topbar-slot topbar-slot--ship">
-        <div class="k">Vessel</div>
-        <div class="v ship-name glow"><%= pilot.shipName || '—' %></div>
-      </div>
       <div class="topbar-slot">
         <div class="k">Stardate</div>
         <div class="v" id="tb-stardate">—</div>

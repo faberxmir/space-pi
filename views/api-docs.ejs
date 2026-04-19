@@ -4,7 +4,7 @@
   <header class="page-header">
     <div class="sub">// system document · classification: unlisted</div>
     <h1 class="glow">API DOCS</h1>
-    <div class="sub">ISS SUPERTOAD · hardware control interface · <a href="/">← cockpit</a></div>
+    <div class="sub">SS <%= (pilot?.shipName || 'UNKNOWN').toUpperCase() %> · hardware control interface · <a href="/">← cockpit</a></div>
   </header>
 
   <section class="doc-section">
@@ -118,7 +118,7 @@
   </section>
 
   <footer style="margin-top:var(--sp-8); padding-top:var(--sp-4); border-top:1px dashed var(--fg-4); font-size:var(--fs-xs); color:var(--fg-4); letter-spacing:0.18em; text-transform:uppercase;">
-    // end of transmission · supertoad/os
+    // end of transmission · ss/<%= (pilot?.shipName || 'unknown').toLowerCase() %>
   </footer>
 
 </div>

@@ -63,8 +63,8 @@ html, body { height: 100%; overflow: hidden; }
   font-family: var(--font-display); font-size: 20px; line-height: 1;
   color: var(--fg-1); text-shadow: var(--glow);
 }
-.topbar-slot--ship .ship-name {
-  font-size: 36px;
+.brand .mark {
+  font-size: 20px;
   letter-spacing: 0.08em;
 }
 
