@@ -25,11 +25,11 @@ async function bootstrap(context) {
   await coreIoUp(context);
   await peripheralsUp(context);
   await terminalUp(context);
+  await session_up(context);
   await routesUp(context);
   await cockpitUp(context);
   await ping_up(context);
   await gunctrl_up(context);
-  await session_up(context);
 
   // await runtime(context);
 
