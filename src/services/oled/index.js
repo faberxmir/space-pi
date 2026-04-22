@@ -11,7 +11,7 @@ const delay = ms => new Promise(r => setTimeout(r, ms));
 function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, height = 64, logger = console } = {}) {
   let i2cBus = null;
   let oled = null;
-  let pingTimer = null;
+  let toastTimer = null;
 
   const state = {
     ready: false,
@@ -242,30 +242,27 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
       oled.writeString(font, 1, pilot, 1, true);
     },
 
-    showPing(ip) {
+    showToast(line1, line2, durationMs = 5000) {
       if (!state.ready) return;
 
-      const msg   = 'INCOMING PING';
-      const msgX  = Math.floor((width - msg.length * 6) / 2);
-      const ipStr = String(ip);
-      const ipX   = Math.floor((width - ipStr.length * 6) / 2);
       const totalH = 8 + 4 + 8;
-      const msgY  = Math.floor((height - totalH) / 2);
-      const ipY   = msgY + 12;
+      const y1 = Math.floor((height - totalH) / 2);
+      const y2 = y1 + 12;
+      const x1 = Math.max(0, Math.floor((width - String(line1).length * 6) / 2));
+      const x2 = Math.max(0, Math.floor((width - String(line2).length * 6) / 2));
 
       oled.clearDisplay(true);
-      oled.setCursor(Math.max(0, msgX), msgY);
-      oled.writeString(font, 1, msg, 1, true);
-      oled.setCursor(Math.max(0, ipX), ipY);
-      oled.writeString(font, 1, ipStr, 1, true);
+      oled.setCursor(x1, y1);
+      oled.writeString(font, 1, String(line1), 1, true);
+      oled.setCursor(x2, y2);
+      oled.writeString(font, 1, String(line2), 1, true);
 
-      if (pingTimer) clearTimeout(pingTimer);
-
-      pingTimer = setTimeout(async () => {
-        pingTimer = null;
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(async () => {
+        toastTimer = null;
         if (!state.ready) return;
         try {
-          const fs   = require('fs');
+          const fs  = require('fs');
           const path = require('path');
           const PILOT_JSON  = path.join(__dirname, '../../../cockpit/pilot.json');
           const COCKPIT_DIR = path.dirname(PILOT_JSON);
@@ -280,7 +277,15 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
           }
           await this.bootComplete({ shipName: sn, pilotName: pn, configured, skipAnimation: true });
         } catch (_) {}
-      }, 5000);
+      }, durationMs);
+    },
+
+    showPing(ip) {
+      this.showToast('INCOMING PING', String(ip), 5000);
+    },
+
+    showLoginFail(ip) {
+      this.showToast('LOGIN FAIL', String(ip), 4000);
     },
 
     module(name, status) {

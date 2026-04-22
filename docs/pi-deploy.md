@@ -29,10 +29,12 @@ List exact apt packages we need and why.
 | Package | Why |
 |---|---|
 | `tcpdump` | Ping detection — the app spawns tcpdump to monitor incoming ICMP echo requests |
+| `libpam0g-dev` | Needed to compile the `authenticate-pam` Node native module for web login auth |
 
 ```bash
-sudo apt install tcpdump
+sudo apt install tcpdump libpam0g-dev
 sudo setcap cap_net_raw+eip $(which tcpdump)
+npm install authenticate-pam   # run from the app directory; requires libpam0g-dev
 ```
 
 > `setcap` is persistent across reboots — run once after install.

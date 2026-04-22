@@ -117,6 +117,42 @@
     </div>
   </section>
 
+  <section class="doc-section">
+    <h2>Auth</h2>
+    <div class="panel">
+      <div class="panel__header"><span>auth.routes</span><span class="dots">· · ·</span></div>
+      <table class="route-table">
+        <thead>
+          <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>GET</td><td>/login</td><td>Render login page (pre-fills pilot name from config)</td></tr>
+          <tr><td>POST</td><td>/login</td><td>Authenticate via OS PAM. Body: <code>{ username, password }</code>. Sets <code>space_session</code> cookie on success. Rate-limited: 5 failures per 60 s → 60 s lockout.</td></tr>
+          <tr><td>POST</td><td>/logout</td><td>Destroy session and clear cookie</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Gun Control</h2>
+    <div class="panel">
+      <div class="panel__header"><span>gunctrl.terminal</span><span class="dots">· · ·</span></div>
+      <table class="route-table">
+        <thead>
+          <tr><th>Command</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>gunctrl -charge &lt;target&gt;</code></td><td>Charge selected guns sequentially (~2 s each). Fires rapid LED blink + surge tone per gun. Returns immediately; effect runs in background.</td></tr>
+          <tr><td><code>gunctrl -fire &lt;target&gt;</code></td><td>Fire all charged guns in the target group simultaneously. LED flash + laser tone for 1 s. Clears charge state.</td></tr>
+        </tbody>
+      </table>
+      <div style="padding:var(--sp-3) var(--sp-4); border-top:1px dashed var(--fg-4); font-size:var(--fs-xs); color:var(--fg-3);">
+        Targets: <code>all</code> · <code>left</code> (1–3) · <code>center</code> (4–6) · <code>right</code> (7–9) · <code>1</code>–<code>9</code>
+      </div>
+    </div>
+  </section>
+
   <footer style="margin-top:var(--sp-8); padding-top:var(--sp-4); border-top:1px dashed var(--fg-4); font-size:var(--fs-xs); color:var(--fg-4); letter-spacing:0.18em; text-transform:uppercase;">
     // end of transmission · ss/<%= (pilot?.shipName || 'unknown').toLowerCase() %>
   </footer>

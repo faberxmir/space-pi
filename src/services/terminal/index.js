@@ -3,7 +3,13 @@ const { spawn } = require('child_process');
 const TIMEOUT_MS = 10000;
 
 function createTerminalService({ commands, logger }) {
+  const internalHandlers = {};
+
   function run(commandName, args = []) {
+    if (internalHandlers[commandName]) {
+      return Promise.resolve().then(() => internalHandlers[commandName](args));
+    }
+
     const config = commands[commandName];
     if (!config) return Promise.resolve({ allowed: false });
 
@@ -42,7 +48,11 @@ function createTerminalService({ commands, logger }) {
     });
   }
 
-  return { run, commands };
+  return {
+    run,
+    commands,
+    registerInternal(name, handler) { internalHandlers[name] = handler; },
+  };
 }
 
 module.exports = { createTerminalService };
