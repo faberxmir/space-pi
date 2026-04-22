@@ -5,6 +5,14 @@ const GUN_GROUPS = {
   right:  [7, 8, 9],
 };
 
+// Build gun-to-mask lookup from ACTIVE_BYTES so gun N maps to the Nth
+// wired LED position rather than assuming LEDs occupy bits 0-8.
+const ACTIVE_BYTES = Number(process.env.ACTIVE_BYTES || 0xffff);
+const GUN_MASKS = [];
+for (let bit = 0; bit < 16; bit++) {
+  if ((ACTIVE_BYTES >> bit) & 1) GUN_MASKS.push(1 << bit);
+}
+
 const CHARGE_CYCLES    = 10;
 const CHARGE_CYCLE_MS  = 200;
 const CHARGE_ON_MS     = 100;
@@ -19,7 +27,7 @@ const FIRE_LASER_MS    = 200;
 const delay = ms => new Promise(r => setTimeout(r, ms));
 
 function gunMask(n) {
-  return 1 << (n - 1);
+  return GUN_MASKS[n - 1] || 0;
 }
 
 function resolveGuns(target) {
