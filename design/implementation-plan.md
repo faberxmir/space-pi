@@ -25,104 +25,37 @@ Iteration order is open to revision. Iterations 2 and 3 in particular are interc
 
 ## Iteration 1: Secure ship claim
 
-**Status:** partially implemented. The claim flow's foundations are in place; remaining work is authentication, security-level awareness, and onboarding docs.
+**Status: COMPLETE.**
 
-**Goal.** A student can securely claim a ship end-to-end: SSH in with the default password, fill in `cockpit/pilot.json`, rotate the OS password, and log into the web terminal using that same new password. The ship visibly reports its security level on both the OLED and the web UI and rewards hardening to `HARDENED`. No game content is required after login — the terminal lands on the existing command interface.
+**Goal.** A student can securely claim a ship end-to-end: SSH in with the default credentials from `cockpit/factory-settings.json`, create a user, add it to the OS `pilot` group, create `~/pilot.json`, rotate the OS password, and log into the web terminal using that same password. The ship visibly reports its security level on both the OLED and the web UI.
 
-**Out of scope.** Any game mechanic: no targeting, firing, movement, energy, firewalls, or discovery. Those are later iterations.
+### What is in place
 
-### What's already in place
+**Claim flow (group-based):**
+- `src/services/cockpit/index.js` — watches `/etc/group` (1 s poll via `fs.watchFile`) for the `pilot` group. 0 members → unassigned/empty; 2+ → unassigned/tooMany; exactly 1 → resolves home dir from `/etc/passwd` and watches `~/pilot.json`. Validates `pilotName`, `shipName`, `pilotImage` (all non-empty strings) and checks file ownership against the group member's uid. Emits `assigned`, `unassigned`, `securityLevel` events. Calls `sessionService.destroyAll()` on unassignment.
+- `src/bootstrap/phases/cockpit_up.js` — instantiates the cockpit service, registers event handlers for OLED boarding animation, LED sequence, fanfare, and NO PILOT screen.
 
-Relevant existing code, so we don't rewrite it:
+**Boarding animation (OLED):**
+- `oledService.boardingSequence(pilot, buzzerService)` — four steps: "Ship has been claimed by" slides from bottom to top (2 s, two beeps), pilot name centered (3 s), ship name size-2 (3 s), final status screen.
+- `oledService.setRestoreState(snapshot)` — cockpit_up sets this on assignment/unassignment so toast notifications restore to the correct screen.
 
-- `cockpit/pilot.json` exists and defines `shipName`, `pilotName`, `pilot_image`.
-- `src/bootstrap/phases/cockpit_up.js` watches `pilot.json` and responds to board/depart events with OLED updates, LED sequences, and buzzer fanfares. It already distinguishes `OPEN` (unclaimed) from `CLAIMED` via `isPilotConfigured()`.
-- `src/bootstrap/phases/routes_up.js` starts the HTTP server and runs the initial presence/absence response on startup.
-- `src/bootstrap/phases/terminal_up.js` attaches a terminal service driven by `src/config/terminal-commands.json`.
-- `src/http/app.js` wires the Express app together. `src/http/routes/terminal_routes.js` handles `POST /terminal/:command`. `src/http/routes/page_routes.js` renders `index` and `api-docs` via EJS. Views live under `views/` with shared partials in `views/partials/`.
-- Static assets are served from `public/`; cockpit assets (e.g. profile image) from `/cockpit`.
+**Security levels (0 / 1 / 2):**
+- Detected inside `src/services/cockpit/index.js` on state change and on a 30 s interval.
+- Level 0: factory password still valid. Level 1: exactly one of (password changed, SSH key-only). Level 2: both.
+- Web UI: pilot frame glows red/pulse (level 0), green/pulse (level 1), steady blue (level 2) via `.sec-0/.sec-1/.sec-2` CSS classes.
 
-This iteration adds auth on top of this without disturbing the existing shape.
+**Authentication (inline terminal):**
+- `src/http/routes/auth_routes.js` — `GET /auth/status`, `POST /auth/login` (PAM, rate-limited, OLED toast on failure), `POST /auth/logout`.
+- `src/http/routes/terminal_routes.js` — returns 401 when session is missing/expired.
+- `src/services/session/index.js` — in-memory token store with TTL and `destroyAll()`.
+- `public/js/terminal.js` — state machine: login mode (Linux-style `login:` / `Password:` prompts, POST to `/auth/login`) and shell mode (`$ `, handles `logout` command, switches to login mode on 401).
 
-### Security mechanism (full description)
+**Web UI states:**
+- Unassigned: matrix animation canvas + factory settings (empty group) or "Too many pilots" (2+ members) in console area. 15 s auto-reload.
+- Assigned + not logged in: terminal widget with `data-auth="false"`, starts in login mode.
+- Assigned + logged in: terminal widget with `data-auth="true"`, starts in shell mode.
 
-See `design/gamedesign.md` → "Authentication and session security" for the canonical design. Summary here:
-
-**Single credential.** The ship has one secret: the OS password for the `student` user. SSH verifies via the OS. The web terminal verifies against the same password by calling PAM. No separate hash lives in `pilot.json`; no password tool is needed on the game side.
-
-**Four-level ladder.**
-
-- `OPEN` — `pilot.json` unconfigured. Already detected today.
-- `CLAIMED` — `pilot.json` populated, default OS password still valid. Anyone who knows the default can SSH in or log into the web terminal.
-- `LOCKED` — default OS password no longer valid (student ran `passwd`). Student is sole authenticator for both methods. Minimum classroom state.
-- `HARDENED` — `LOCKED`, plus effective sshd config has `PasswordAuthentication no` and `~/.ssh/authorized_keys` has at least one key.
-
-**Detection.**
-
-- `OPEN` vs `CLAIMED` — already handled by `isPilotConfigured()`.
-- `CLAIMED` vs `LOCKED` — attempt a PAM authentication with `student` and the known default password (sourced from `.env`). Success = default still active. Failure = student rotated.
-- `LOCKED` vs `HARDENED` — scan `/etc/ssh/sshd_config` and `/etc/ssh/sshd_config.d/*.conf` for the effective `PasswordAuthentication` directive; count non-comment lines in `~/.ssh/authorized_keys`. Both unprivileged reads.
-
-**PAM integration.** The node process needs a way to ask PAM to verify a password without running as root. Two acceptable implementations; decision deferred to implementation time:
-
-1. A Node native PAM binding (e.g. `authenticate-pam`). Clean API; requires `libpam0g-dev` and native compile during image build.
-2. A small setuid-root helper binary that reads `user\npassword\n` on stdin and exits 0/1. Node `spawn`s it. Keeps node fully unprivileged.
-
-### Iteration 1 deliverables checklist
-
-Mark items done or remove them as they land.
-
-**Auth plumbing**
-
-- [ ] Wire up PAM: try `authenticate-pam` native module first; fall back to a setuid helper if the native install proves painful on Pi 3B+.
-- [ ] Document the default `student` password in `docs/pi-deploy.md` or `docs/pi_setup.md`, and expose it to the ship process as an `.env` value (e.g. `DEFAULT_STUDENT_PASSWORD`) so the security-level detector can test against it.
-- [ ] Session store service (in-memory map keyed by random token, with TTL from `.env`). Attach to `context` from a new bootstrap phase.
-- [ ] Express auth middleware that requires a valid session cookie on all non-login routes and redirects unauthenticated requests to `/login`. Apply it in `src/http/app.js` before the existing route mounts.
-
-**Login UI and routes**
-
-- [ ] `GET /login` renders `views/login.ejs` (re-uses `views/partials/head.ejs` / `foot.ejs`). Username field pre-fills from `pilot.json`; editable.
-- [ ] `POST /login` verifies username + password via PAM; on success issues a session cookie and redirects to `/`; on failure records the attempt and re-renders with an error.
-- [ ] `POST /logout` clears the session and redirects to `/login`.
-- [ ] `public/login.css` for page-specific styling (per the project's per-page CSS rule).
-- [ ] Update `views/api-docs.ejs` to document `/login`, `/logout`, and `/security` (per the project's "update docs when routes change" rule).
-
-**Security-level detector**
-
-- [ ] New service at `src/services/security/index.js`. Combines `isPilotConfigured()`, a PAM default-password check, an sshd config scan, and an authorized_keys count. Returns one of `OPEN | CLAIMED | LOCKED | HARDENED`. Caches the result; re-computes on demand and on an interval.
-- [ ] New bootstrap phase `src/bootstrap/phases/security_up.js` that instantiates the detector and attaches `context.securityService`.
-- [ ] Wire the phase into `src/bootstrap/index.js` after `cockpit_up`.
-
-**Display**
-
-- [ ] Extend `src/services/oled/oled_status.js` (or the status screen it drives) to include the security level as a short label. At `CLAIMED`, alternate with a nag string (e.g. `SET PASSWORD`).
-- [ ] Add a security badge to the shared header partial (`views/partials/head.ejs`), color-coded. Rendered from a value passed in by `page_routes.js` via `securityService.currentLevel()`.
-- [ ] `GET /security` returning the current level as JSON, so the UI can refresh the badge without a full reload.
-- [ ] Explainer page (`views/security.ejs` + route in `page_routes.js`) describing each level and how to advance.
-
-**Login failure handling**
-
-- [ ] Rate limiter on `/login` using `.env` thresholds (default N=5, M=60, T=60).
-- [ ] Server-side log of failed attempts (source IP, timestamp, attempted username).
-- [ ] OLED briefly displays source IP of failed attempts. Extend the OLED service with a short-lived "toast" path if one doesn't exist.
-
-**Documentation**
-
-- [ ] `docs/claim-a-ship.md` walking a student through `OPEN` → `CLAIMED` → `LOCKED` → `HARDENED` with exact commands, framed in terms of which security level each step unlocks.
-- [ ] Update `docs/pi-deploy.md` (and/or `docs/pi_setup.md`) with the PAM dependency install step and the default-password convention.
-
-**`.env` additions**
-
-- [ ] `DEFAULT_STUDENT_PASSWORD=<value>` — used by the security-level detector.
-- [ ] `SESSION_TTL_SECONDS=3600` (tunable).
-- [ ] `LOGIN_RATE_MAX=5`, `LOGIN_RATE_WINDOW_SECONDS=60`, `LOGIN_RATE_PENALTY_SECONDS=60`.
-
-### Open questions in iteration 1
-
-- PAM via native module vs setuid helper. Decide at implementation time; lean native.
-- Whether the web terminal should be served at all in `CLAIMED` state. *Leaning: serve it with a visible nag*, so the student experiences the vulnerability rather than being protected from it.
-- Detection frequency for `LOCKED`/`HARDENED` re-checks. PAM auth on every request is wasteful; startup + on-demand + a periodic recheck (e.g. every 30 s) is the probable shape.
-- Whether the process should run as `student` with `shadow` group membership (simpler but more permissive) or as a less-privileged user delegating to a setuid helper (tighter isolation).
+**`.env` keys in use:** `SESSION_TTL_SECONDS`, `LOGIN_RATE_MAX`, `LOGIN_RATE_WINDOW_SECONDS`, `LOGIN_RATE_PENALTY_SECONDS`. Factory password sourced from `cockpit/factory-settings.json`.
 
 ---
 

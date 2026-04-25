@@ -1,0 +1,5 @@
+{
+    "owner": "pilot",
+    "password": "allowentry",
+    "instructions": "These are the default settings for the cockpit. To claim this ship, you must complete the following steps: 1-SSH to the IP address of this ship and log in with the default credentials above. 2-Create a user with a home folder and assign the user to the group 'pilot'. 3-In the home folder, create pilot.json: {\"pilotName\":\"value\",\"shipName\":\"value\",\"pilotImage\":\"value\"}. pilotImage can be any URL or local path that a browser can load."
+}

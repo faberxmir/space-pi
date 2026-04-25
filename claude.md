@@ -56,8 +56,26 @@ See `docs/pi-deploy.md` for the full deployment checklist.
    - CSS common to all files are kept in main.css
    - css for [pagename].html are kept in [pagename].css
 
+
+## removing features
+- unless specifically asked to remove or change features. Ask before doing so before making a plan.
+
+
 ## web server
 - each time we add routes for the API, also update the webpage documenting the routes.
 
 ## design
 - instructions for visuals are in the design folder. 
+- the game design lives in `design/gamedesign.md` — consult it for mechanics, pedagogy, and decisions already made.
+
+## implementation plan
+- ordered implementation work is tracked in `design/implementation-plan.md`.
+- when a feature listed in the plan is implemented, update that document: mark the item done or remove it. the plan must always reflect the current state of the codebase, not a historical snapshot.
+- before starting work on a feature, check the plan to confirm it's still the active iteration and that the scope hasn't drifted.
+- "iteration" refers to a development milestone in the plan. "phase" always refers to a bootstrap phase in `src/bootstrap/phases/`. Keep these terms distinct.
+
+# program behavior
+
+## boot
+- if there is no config in the cockpit/pilot.json meaning empty strings in image, pilot or ship name, then after doing the boot animation, the oled should just show NO_PILOT and ip address on separate lines, but centered on screen
+- if there is config, the ship name and pilot name should be shown on separate lines, ship name in larger letters than the pilot name.

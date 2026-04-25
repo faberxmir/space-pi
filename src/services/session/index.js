@@ -23,7 +23,11 @@ function createSessionService({ ttlSeconds = 3600 } = {}) {
     sessions.delete(token);
   }
 
-  return { create, get, destroy };
+  function destroyAll() {
+    sessions.clear();
+  }
+
+  return { create, get, destroy, destroyAll };
 }
 
 module.exports = { createSessionService };

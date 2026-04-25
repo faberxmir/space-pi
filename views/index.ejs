@@ -4,7 +4,7 @@
   <!-- TOP BAR -->
   <div class="topbar">
     <div class="brand">
-      <div class="mark glow">SS <%= (pilot.shipName || 'UNKNOWN').toUpperCase() %></div>
+      <div class="mark glow">SS <%= ((assigned && pilot?.shipName) || 'UNKNOWN').toUpperCase() %></div>
       <div class="sub">// cockpit</div>
     </div>
     <div class="topbar-slots">
@@ -22,9 +22,6 @@
       <span class="led led--ok">NET</span>
       <span class="led led--warn">CPU</span>
       <a class="btn btn--ghost" href="/api-docs" style="padding:4px 10px; font-size:var(--fs-xs)">API DOCS</a>
-      <form method="POST" action="/logout" style="display:inline">
-        <button class="btn btn--ghost" type="submit" style="padding:4px 10px; font-size:var(--fs-xs); cursor:pointer">LOGOUT</button>
-      </form>
     </div>
   </div>
 
@@ -39,10 +36,10 @@
           <span>pilot.id</span>
           <span class="dots">· · ·</span>
         </div>
-        <div class="pilot">
+        <div class="pilot<% if (assigned) { %> sec-<%= securityLevel %><% } %>">
           <div class="avatar">
-            <% if (pilotConfigured) { %>
-              <img src="/cockpit/<%= pilot.pilot_image %>" class="avatar-img" alt="pilot">
+            <% if (assigned && pilot) { %>
+              <img src="<%= pilot.pilotImage %>" class="avatar-img" alt="pilot">
             <% } else { %>
               <div class="reticle">
                 <div class="placeholder">?</div>
@@ -52,8 +49,8 @@
             <% } %>
           </div>
           <div>
-            <div class="callsign"><%= pilot.pilotName %></div>
-            <div class="callsign-sub">Pilot · Unassigned</div>
+            <div class="callsign"><%= (assigned && pilot) ? pilot.pilotName : '—' %></div>
+            <div class="callsign-sub">Pilot · <%= assigned ? 'Assigned' : 'Unassigned' %></div>
           </div>
           <div class="kv"><span class="kv__k">Rank</span><span class="kv__v dim">—</span><span class="kv__u">—</span></div>
           <div class="kv"><span class="kv__k">Squadron</span><span class="kv__v dim">—</span><span class="kv__u">—</span></div>
@@ -62,23 +59,36 @@
       </div>
     </div>
 
-    <!-- CENTER: Terminal or no-pilot gate -->
+    <!-- CENTER: Terminal or unassigned view -->
     <div class="center-col">
-      <% if (pilotConfigured) { %>
-      <div class="cockpit-terminal panel">
+      <% if (assigned) { %>
+      <div id="term-widget" class="cockpit-terminal panel" data-auth="<%= loggedIn ? 'true' : 'false' %>">
         <div class="panel__header">
           <span>terminal.shell</span>
           <span class="dots">· · ·</span>
         </div>
         <div class="term-output" id="term-output"></div>
         <div class="term-input-row">
-          <span class="term-prompt">$</span>
-          <input id="term-input" type="text" autocomplete="off" spellcheck="false" placeholder="type a command...">
+          <span class="term-prompt" id="term-prompt">$</span>
+          <input id="term-input" type="text" autocomplete="off" spellcheck="false">
         </div>
       </div>
       <% } else { %>
-      <div class="no-pilot panel">
-        <div class="no-pilot__msg">no pilot has entered to run this ship</div>
+      <div class="unassigned-col panel">
+        <div class="panel__header">
+          <span>terminal.shell</span>
+          <span class="dots">· · ·</span>
+        </div>
+        <canvas id="matrix-canvas" class="matrix-rain"></canvas>
+        <div class="term-output unassigned-console" id="term-output">
+          <% if (reason === 'tooMany') { %>
+            <span class="term-line term-line--error">Too many pilots assigned to this ship.</span>
+          <% } else { %>
+            <% for (const [k, v] of Object.entries(factorySettings)) { %>
+              <span class="term-line"><span class="term-line--echo"><%= k %>:</span> <%= v %></span>
+            <% } %>
+          <% } %>
+        </div>
       </div>
       <% } %>
     </div>
@@ -88,8 +98,8 @@
   <!-- STATUS BAR -->
   <div class="statusbar">
     <div class="statusbar-left">
-      <span>SHELL <b>READY</b></span>
-      <span>USER <b><%= pilot.pilotName %></b></span>
+      <span>SHELL <b><%= assigned ? 'READY' : 'OFFLINE' %></b></span>
+      <span>USER <b><%= (assigned && pilot) ? pilot.pilotName : '—' %></b></span>
       <span>TTY <b>/dev/tty0</b></span>
     </div>
     <div class="statusbar-right">
@@ -105,17 +115,17 @@
     const now = new Date();
     document.getElementById('sb-clock').textContent =
       pad(now.getUTCHours()) + ':' + pad(now.getUTCMinutes()) + ':' + pad(now.getUTCSeconds());
-
     const start = Date.UTC(now.getUTCFullYear(), 0, 0);
-    const day = Math.floor((now - start) / 86400000);
-    const frac = ((now.getUTCHours()*3600 + now.getUTCMinutes()*60 + now.getUTCSeconds()) / 864).toFixed(0);
+    const day   = Math.floor((now - start) / 86400000);
+    const frac  = ((now.getUTCHours()*3600 + now.getUTCMinutes()*60 + now.getUTCSeconds()) / 864).toFixed(0);
     document.getElementById('tb-stardate').textContent =
       (50000 + (now.getUTCFullYear()-2020)*1000 + day) + '.' + pad(frac);
   }
   tick(); setInterval(tick, 1000);
-<% if (!pilotConfigured) { %>
+<% if (!assigned) { %>
   setTimeout(() => location.reload(), 15000);
 <% } %>
 </script>
-<% if (pilotConfigured) { %><script src="/js/terminal.js" defer></script><% } %>
+<% if (!assigned) { %><script src="/js/matrix.js" defer></script><% } %>
+<% if (assigned) { %><script src="/js/terminal.js" defer></script><% } %>
 <%- include('partials/foot') %>

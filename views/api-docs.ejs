@@ -126,9 +126,9 @@
           <tr><th>Method</th><th>Path</th><th>Description</th></tr>
         </thead>
         <tbody>
-          <tr><td>GET</td><td>/login</td><td>Render login page (pre-fills pilot name from config)</td></tr>
-          <tr><td>POST</td><td>/login</td><td>Authenticate via OS PAM. Body: <code>{ username, password }</code>. Sets <code>space_session</code> cookie on success. Rate-limited: 5 failures per 60 s → 60 s lockout.</td></tr>
-          <tr><td>POST</td><td>/logout</td><td>Destroy session and clear cookie</td></tr>
+          <tr><td>GET</td><td>/auth/status</td><td>Returns <code>{ loggedIn: bool, username: string|null }</code></td></tr>
+          <tr><td>POST</td><td>/auth/login</td><td>Authenticate via OS PAM. Body: <code>{ username, password }</code>. Sets <code>space_session</code> cookie on success. Returns <code>{ ok: bool, error?: string }</code>. Rate-limited: 5 failures per 60 s → 60 s lockout.</td></tr>
+          <tr><td>POST</td><td>/auth/logout</td><td>Destroy session and clear cookie. Returns <code>{ ok: true }</code></td></tr>
         </tbody>
       </table>
     </div>

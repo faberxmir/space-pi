@@ -1,41 +1,46 @@
-const fs = require('fs');
-const path = require('path');
-const router = require('express').Router();
+const fs      = require('fs');
+const path    = require('path');
+const express = require('express');
 
-const COCKPIT_DIR  = path.join(__dirname, '../../../cockpit');
-const PILOT_JSON   = path.join(COCKPIT_DIR, 'pilot.json');
-const PILOT_FALLBACK = { shipName: '', pilotName: 'no pilot', pilot_image: '' };
+const FACTORY_SETTINGS_PATH = path.join(__dirname, '../../../cockpit/factory-settings.json');
 
-function loadPilot() {
-  try {
-    return JSON.parse(fs.readFileSync(PILOT_JSON, 'utf8'));
-  } catch (_) {
-    return { ...PILOT_FALLBACK };
-  }
+function loadFactorySettings() {
+  try { return JSON.parse(fs.readFileSync(FACTORY_SETTINGS_PATH, 'utf8')); } catch (_) { return {}; }
 }
 
-function isPilotConfigured(pilot) {
-  if (!(pilot.shipName || '').trim()) return false;
-  const name = (pilot.pilotName || '').trim().toLowerCase();
-  if (!name || name === 'no pilot') return false;
-  if (!(pilot.pilot_image || '').trim()) return false;
-  try {
-    fs.accessSync(path.join(COCKPIT_DIR, pilot.pilot_image));
-  } catch (_) {
-    return false;
-  }
-  return true;
+function parseCookies(req) {
+  return (req.headers.cookie || '').split(';').reduce((acc, pair) => {
+    const [k, ...v] = pair.trim().split('=');
+    if (k) acc[k.trim()] = decodeURIComponent(v.join('='));
+    return acc;
+  }, {});
 }
 
-function createPageRoutes() {
+function createPageRoutes(context) {
+  const router = express.Router();
+
+  function getTemplateVars(req) {
+    const cockpitState = context.cockpitService?.currentState() ?? { assigned: false, reason: 'empty', pilot: null, securityLevel: 0 };
+    const cookies      = parseCookies(req);
+    const session      = context.sessionService?.get(cookies.space_session || '');
+    return {
+      assigned:        cockpitState.assigned,
+      pilot:           cockpitState.pilot,
+      securityLevel:   cockpitState.securityLevel,
+      reason:          cockpitState.reason,
+      loggedIn:        !!session,
+      factorySettings: cockpitState.assigned ? {} : loadFactorySettings(),
+    };
+  }
+
   router.get('/', (req, res) => {
-    const pilot = loadPilot();
-    res.render('index', { page: 'index', pilot, pilotConfigured: isPilotConfigured(pilot) });
+    res.render('index', { page: 'index', ...getTemplateVars(req) });
   });
+
   router.get('/api-docs', (req, res) => {
-    const pilot = loadPilot();
-    res.render('api-docs', { page: 'api-docs', pilot, pilotConfigured: isPilotConfigured(pilot) });
+    res.render('api-docs', { page: 'api-docs', ...getTemplateVars(req) });
   });
+
   return router;
 }
 

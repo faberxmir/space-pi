@@ -1,119 +1,92 @@
-const fs   = require('fs');
-const path = require('path');
+const { createCockpitService } = require('../../services/cockpit');
 
-const PILOT_JSON  = path.join(__dirname, '../../../cockpit/pilot.json');
-const COCKPIT_DIR = path.dirname(PILOT_JSON);
-
-const FANFARE = [
-  [523,  120],  // C5
-  [659,  120],  // E5
-  [784,  120],  // G5
-  [1047, 500],  // C6 — held
+const LONG_FANFARE = [
+  [523,  200],  // C5
+  [659,  200],  // E5
+  [784,  200],  // G5
+  [1047, 200],  // C6
+  [784,  150],  // G5
+  [659,  150],  // E5
+  [784,  150],  // G5
+  [1047, 300],  // C6
+  [1319, 300],  // E6
+  [1568, 300],  // G6
+  [2093, 600],  // C7
 ];
+
 const NEGATIVE_FANFARE = [
-  [784, 150],  // G5 — high
-  [440, 150],  // A4 — lower
-  [220, 300],  // A3 — lowest, held
+  [784, 150],
+  [440, 150],
+  [220, 300],
 ];
+
 const NOTE_GAP_MS = 20;
+const delay = ms => new Promise(r => setTimeout(r, ms));
 
-function loadPilot() {
-  try {
-    const p = JSON.parse(fs.readFileSync(PILOT_JSON, 'utf8'));
-    return {
-      shipName:    (p.shipName    || '').trim(),
-      pilotName:   (p.pilotName   || '').trim(),
-      pilot_image: (p.pilot_image || '').trim(),
-    };
-  } catch (_) {
-    return { shipName: '', pilotName: '', pilot_image: '' };
-  }
-}
-
-function isPilotConfigured(p) {
-  if (!p.shipName) return false;
-  if (!p.pilotName || p.pilotName.toLowerCase() === 'no pilot') return false;
-  if (!p.pilot_image) return false;
-  try {
-    fs.accessSync(path.join(COCKPIT_DIR, p.pilot_image));
-  } catch (_) {
-    return false;
-  }
-  return true;
-}
-
-async function playFanfare(buzzerService) {
-  for (const [hz, ms] of FANFARE) {
+async function playLongFanfare(buzzerService) {
+  if (!buzzerService) return;
+  for (const [hz, ms] of LONG_FANFARE) {
     await buzzerService.playNote(hz, ms);
-    await new Promise(r => setTimeout(r, NOTE_GAP_MS));
+    await delay(NOTE_GAP_MS);
   }
 }
 
 async function playNegativeFanfare(buzzerService) {
+  if (!buzzerService) return;
   for (const [hz, ms] of NEGATIVE_FANFARE) {
     await buzzerService.playNote(hz, ms);
-    await new Promise(r => setTimeout(r, NOTE_GAP_MS));
+    await delay(NOTE_GAP_MS);
   }
 }
 
 async function negativeFlash(ledService) {
   for (let i = 0; i < 3; i++) {
     ledService?.allOn();
-    await new Promise(r => setTimeout(r, 100));
+    await delay(100);
     ledService?.allOff();
-    await new Promise(r => setTimeout(r, 100));
+    await delay(100);
   }
 }
 
 async function cockpitUp(context) {
-  let pilot      = loadPilot();
-  let configured = isPilotConfigured(pilot);
-  let busy       = false;
-
-  fs.watchFile(PILOT_JSON, { interval: 1000, persistent: false }, async (curr, prev) => {
-    if (curr.mtimeMs === prev.mtimeMs) return;
-    if (busy) return;
-
-    const newPilot      = loadPilot();
-    const newConfigured = isPilotConfigured(newPilot);
-
-    if (newConfigured === configured) return;
-
-    busy       = true;
-    configured = newConfigured;
-    pilot      = newPilot;
-
-    try {
-      if (configured) {
-        context.logger?.info?.('[COCKPIT] pilot boarded — playing boarding sequence');
-        await context.oledService?.bootComplete({
-          shipName:   pilot.shipName,
-          pilotName:  pilot.pilotName,
-          configured: true,
-        });
-        await Promise.all([
-          context.ledService?.sequence(),
-          context.buzzerService ? playFanfare(context.buzzerService) : Promise.resolve(),
-        ]);
-      } else {
-        context.logger?.info?.('[COCKPIT] pilot departed — showing NO PILOT screen');
-        await context.oledService?.bootComplete({ configured: false });
-        await Promise.all([
-          negativeFlash(context.ledService),
-          context.buzzerService ? playNegativeFanfare(context.buzzerService) : Promise.resolve(),
-        ]);
-      }
-    } finally {
-      busy = false;
-    }
+  const cockpitService = createCockpitService({
+    sessionService: context.sessionService,
+    logger: context.logger,
   });
 
-  context.lifecycle.register('cockpitWatcher', () => {
-    fs.unwatchFile(PILOT_JSON);
+  cockpitService.on('assigned', async ({ pilot }) => {
+    context.logger?.info?.(`[COCKPIT] assigned to ${pilot.username}`);
+    context.oledService?.setRestoreState({
+      shipName:      pilot.shipName,
+      pilotName:     pilot.pilotName,
+      configured:    true,
+      skipAnimation: true,
+    });
+    await context.oledService?.boardingSequence(pilot, context.buzzerService);
+    await Promise.all([
+      context.ledService?.sequence(),
+      playLongFanfare(context.buzzerService),
+    ]);
   });
 
-  context.logger?.info?.('[COCKPIT_UP] watching cockpit/pilot.json');
-  return context;
+  cockpitService.on('unassigned', async ({ reason }) => {
+    context.logger?.info?.(`[COCKPIT] unassigned (${reason})`);
+    context.oledService?.setRestoreState({ configured: false });
+    await context.oledService?.bootComplete({ configured: false });
+    await Promise.all([
+      negativeFlash(context.ledService),
+      playNegativeFanfare(context.buzzerService),
+    ]);
+  });
+
+  cockpitService.on('securityLevel', (level) => {
+    context.logger?.info?.(`[COCKPIT] security level: ${level}`);
+  });
+
+  context.cockpitService = cockpitService;
+  context.lifecycle.register('cockpit', () => cockpitService.close());
+
+  context.logger?.info?.('[COCKPIT_UP] cockpit service started');
 }
 
 module.exports = { cockpitUp };

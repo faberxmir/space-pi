@@ -12,6 +12,7 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
   let i2cBus = null;
   let oled = null;
   let toastTimer = null;
+  let restoreState = null;
 
   const state = {
     ready: false,
@@ -242,6 +243,10 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
       oled.writeString(font, 1, pilot, 1, true);
     },
 
+    setRestoreState(snapshot) {
+      restoreState = snapshot;
+    },
+
     showToast(line1, line2, durationMs = 5000) {
       if (!state.ready) return;
 
@@ -262,20 +267,7 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
         toastTimer = null;
         if (!state.ready) return;
         try {
-          const fs  = require('fs');
-          const path = require('path');
-          const PILOT_JSON  = path.join(__dirname, '../../../cockpit/pilot.json');
-          const COCKPIT_DIR = path.dirname(PILOT_JSON);
-          let pilot = {};
-          try { pilot = JSON.parse(fs.readFileSync(PILOT_JSON, 'utf8')); } catch (_) {}
-          const sn = (pilot.shipName    || '').trim();
-          const pn = (pilot.pilotName   || '').trim();
-          const pi = (pilot.pilot_image || '').trim();
-          let configured = !!(sn && pn && pn.toLowerCase() !== 'no pilot' && pi);
-          if (configured) {
-            try { fs.accessSync(path.join(COCKPIT_DIR, pi)); } catch (_) { configured = false; }
-          }
-          await this.bootComplete({ shipName: sn, pilotName: pn, configured, skipAnimation: true });
+          await this.bootComplete(restoreState ?? { configured: false });
         } catch (_) {}
       }, durationMs);
     },
@@ -284,8 +276,53 @@ function createOledService({ i2cBusNumber = 1, address = 0x3C, width = 128, heig
       this.showToast('INCOMING PING', String(ip), 5000);
     },
 
-    showLoginFail(ip) {
-      this.showToast('LOGIN FAIL', String(ip), 4000);
+    async boardingSequence(pilot, buzzerService = null) {
+      if (!state.ready) return;
+
+      const ship  = String(pilot.shipName  || '').toUpperCase();
+      const name  = String(pilot.pilotName || '').toUpperCase();
+
+      // ── 1. "Ship has been claimed by" slides from y=56 to y=4 over 2 s ──
+      const TEXT   = 'Ship has been claimed by';
+      const textX  = Math.max(0, Math.floor((width - TEXT.length * 6) / 2));
+      const FRAMES = 20;
+      const startY = 56;
+      const endY   = 4;
+
+      // Two short deep beeps at start (180 Hz, 120 ms, 200 ms apart)
+      buzzerService?.beep(120, 180);
+
+      for (let i = 0; i < FRAMES; i++) {
+        const y = Math.round(startY + (endY - startY) * (i / (FRAMES - 1)));
+        oled.clearDisplay(true);
+        oled.setCursor(textX, y);
+        oled.writeString(font, 1, TEXT, 1, true);
+        if (i === 10) buzzerService?.beep(120, 180);  // second beep mid-slide
+        await delay(100);
+      }
+
+      // ── 2. Pilot name centered, hold 3 s ──
+      oled.clearDisplay(true);
+      const nameX = Math.max(0, Math.floor((width - name.length * 6) / 2));
+      const nameY = Math.floor((height - 8) / 2);
+      oled.setCursor(nameX, nameY);
+      oled.writeString(font, 1, name, 1, true);
+      await delay(3000);
+
+      // ── 3. "ship name:" small at top, shipName size-2 centered below, hold 3 s ──
+      oled.clearDisplay(true);
+      const LABEL  = 'ship name:';
+      const labelX = Math.floor((width - LABEL.length * 6) / 2);
+      oled.setCursor(labelX, 4);
+      oled.writeString(font, 1, LABEL, 1, true);
+      const shipX = Math.max(0, Math.floor((width - ship.length * 12) / 2));
+      const shipY = 4 + 8 + Math.floor(((height - 12) - 14) / 2);
+      oled.setCursor(shipX, shipY);
+      oled.writeString(font, 2, ship, 1, true);
+      await delay(3000);
+
+      // ── 4. Final ship+pilot screen ──
+      await this.bootComplete({ shipName: pilot.shipName, pilotName: pilot.pilotName, configured: true, skipAnimation: true });
     },
 
     module(name, status) {

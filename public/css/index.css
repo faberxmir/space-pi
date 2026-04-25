@@ -196,19 +196,48 @@ html, body { height: 100%; overflow: hidden; }
   caret-color: var(--fg-1);
 }
 
-/* ---- No-pilot gate ---- */
-.no-pilot {
+/* ---- Unassigned view ---- */
+.unassigned-col {
   flex: 1;
-  display: flex; align-items: center; justify-content: center;
+  display: flex; flex-direction: column;
+  min-height: 0;
+  position: relative;
 }
-.no-pilot__msg {
-  font-family: var(--font-display);
-  font-size: var(--fs-2xl);
-  color: var(--fg-4);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  text-align: center;
+.matrix-rain {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  opacity: 0.35;
+  pointer-events: none;
 }
+.unassigned-console {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--sp-3) var(--sp-4);
+  font-size: var(--fs-sm);
+  color: var(--fg-2);
+  white-space: pre-wrap;
+  word-break: break-all;
+  pointer-events: none;
+}
+
+/* ---- Security level glows on pilot panel ---- */
+@keyframes sec-red-pulse {
+  0%, 100% { box-shadow: 0 0 8px 2px rgba(224, 80, 80, 0.8); }
+  50%       { box-shadow: 0 0 4px 1px rgba(224, 80, 80, 0.3); }
+}
+@keyframes sec-green-pulse {
+  0%, 100% { box-shadow: 0 0 8px 2px rgba(80, 200, 80, 0.8); }
+  50%       { box-shadow: 0 0 4px 1px rgba(80, 200, 80, 0.3); }
+}
+.pilot.sec-0 { animation: sec-red-pulse   2s ease-in-out infinite; }
+.pilot.sec-1 { animation: sec-green-pulse 2s ease-in-out infinite; }
+.pilot.sec-2 { box-shadow: 0 0 10px 3px rgba(80, 130, 240, 0.85); }
+
+/* ---- Login prompt lines ---- */
+.term-line--login { color: var(--fg-3); font-style: italic; }
 
 /* ---- Status bar ---- */
 .statusbar {
